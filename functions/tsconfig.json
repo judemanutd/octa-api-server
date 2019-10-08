@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitReturns": false,
+    "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "pretty": true,
+    "alwaysStrict": true,
+    "lib": ["es2017"],
+    "target": "es2017",
+    "resolveJsonModule": true,
+    "moduleResolution": "node"
+  },
+  "compileOnSave": true,
+  "include": ["src"],
+  "exclude": [".git", "node_modules"]
+}

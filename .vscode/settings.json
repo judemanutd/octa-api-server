@@ -1,0 +1,6 @@
+{
+  "typescript.tsdk": "functions/node_modules/typescript/lib",
+  "npm.enableScriptExplorer": true,
+  "npm.useRootDirectory": false,
+  "npm.includeDirectories": ["functions"]
+}

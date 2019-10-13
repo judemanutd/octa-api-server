@@ -95,3 +95,18 @@ export const parseCookies = (cookiePayload: string) => {
 
   return list;
 };
+
+export const parseRow = row => {
+  try {
+    if (row.createdAt) {
+      row.createdAt = row.createdAt.toDate();
+    }
+    if (row.updatedAt) {
+      row.updatedAt = row.updatedAt.toDate();
+    }
+
+    return row;
+  } catch (error) {
+    throw error;
+  }
+};

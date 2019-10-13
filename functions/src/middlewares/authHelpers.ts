@@ -1,8 +1,11 @@
 import * as admin from "firebase-admin";
 import { Request, Response, NextFunction } from "express";
-import { response, errorResponse } from "./helpers";
-import { HTTP_FORBIDDEN, HTTP_UNAUTHORIZED_ACCESS } from "./http_code";
-import { processFirebaseAuthError, AUTH_ERROR_ID_TOKEN_EXPIRED } from "./firebase_auth_helper";
+import { response, errorResponse } from "../utils/helpers";
+import { HTTP_FORBIDDEN, HTTP_UNAUTHORIZED_ACCESS } from "../utils/http_code";
+import {
+  processFirebaseAuthError,
+  AUTH_ERROR_ID_TOKEN_EXPIRED,
+} from "../utils/firebase_auth_helper";
 
 const TAG = "Authorize ===> ";
 
@@ -36,7 +39,8 @@ export const authorize = () => async (req: Request, res: Response, next: NextFun
     } else {
       try {
         const token: string[] = req.headers.authorization.split(" ");
-        const decodedToken = await verifyToken(token[1], true);
+        // TODO: make email verification required
+        const decodedToken = await verifyToken(token[1], false);
 
         res.locals.auth = decodedToken;
         next();

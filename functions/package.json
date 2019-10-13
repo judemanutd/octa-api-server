@@ -2,7 +2,7 @@
   "name": "functions",
   "private": true,
   "scripts": {
-    "lint": "tslint --project tsconfig.json",
+    "lint": "npx tslint --project tsconfig.json",
     "build": "npx tsc",
     "build-watch": "npx tsc -w",
     "serve": "npm run build && firebase serve --only functions",
@@ -36,10 +36,10 @@
     "lint-staged": "^9.4.2",
     "prettier": "^1.18.2",
     "pretty-quick": "^1.11.1",
-    "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.6.4"
+    "typescript": "^3.6.4",
+    "tslint": "^5.20.0"
   },
   "husky": {
     "hooks": {

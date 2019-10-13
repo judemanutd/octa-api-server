@@ -78,3 +78,5 @@ typings/
 node_modules/
 
 octalogic-portfolio-dev-firebase.json
+
+.env

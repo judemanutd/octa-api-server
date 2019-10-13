@@ -2,7 +2,7 @@
   "name": "functions",
   "private": true,
   "scripts": {
-    "lint": "tslint --project tsconfig.json",
+    "lint": "npx tslint --project tsconfig.json",
     "build": "npx tsc",
     "build-watch": "npx tsc -w",
     "serve": "npm run build && firebase serve --only functions",

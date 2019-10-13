@@ -1,13 +1,7 @@
 import * as admin from "firebase-admin";
 import { Request, Response, NextFunction } from "express";
-import { response, errorResponse } from "../utils/helpers";
-import { HTTP_FORBIDDEN, HTTP_UNAUTHORIZED_ACCESS } from "../utils/http_code";
-import {
-  processFirebaseAuthError,
-  AUTH_ERROR_ID_TOKEN_EXPIRED,
-} from "../utils/firebase_auth_helper";
-
-const TAG = "Authorize ===> ";
+import { processFirebaseAuthError, AUTH_ERROR_ID_TOKEN_EXPIRED } from "../utils/firebaseAuthHelper";
+import { missingAuthError, unAuthorizedError } from "../exceptions/authErrors";
 
 /**
  * Helper function to verify a firebase id token,
@@ -32,10 +26,7 @@ export const authorize = () => async (req: Request, res: Response, next: NextFun
       // user does not have any authentication
       res.locals.auth = null;
 
-      return response(
-        res,
-        errorResponse("Missing Authorization Credentials", "Forbidden", HTTP_FORBIDDEN),
-      );
+      throw missingAuthError;
     } else {
       try {
         const token: string[] = req.headers.authorization.split(" ");
@@ -45,37 +36,17 @@ export const authorize = () => async (req: Request, res: Response, next: NextFun
         res.locals.auth = decodedToken;
         next();
       } catch (error) {
-        console.error(TAG, error);
-
         // check to see if the token has expired, if so then send an unauthorized so the user can refresh the token and re-query
         if (error.code === AUTH_ERROR_ID_TOKEN_EXPIRED) {
           res.locals.auth = null;
-          return response(
-            res,
-            errorResponse(
-              processFirebaseAuthError(error.code),
-              undefined,
-              HTTP_UNAUTHORIZED_ACCESS,
-            ),
-          );
+          throw unAuthorizedError(processFirebaseAuthError(error.code));
         }
 
         res.locals.auth = null;
-        return response(
-          res,
-          errorResponse(processFirebaseAuthError(error.code), undefined, HTTP_FORBIDDEN),
-        );
+        throw unAuthorizedError(processFirebaseAuthError(error.code));
       }
     }
   } catch (error) {
-    console.error(TAG, error);
-    return response(
-      res,
-      errorResponse(
-        "An error occured while authorizing, please try again later",
-        "Forbidden",
-        HTTP_FORBIDDEN,
-      ),
-    );
+    next(error);
   }
 };

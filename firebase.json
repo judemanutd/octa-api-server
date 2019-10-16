@@ -7,6 +7,24 @@
     "predeploy": [
       "npm --prefix \"$RESOURCE_DIR\" run lint",
       "npm --prefix \"$RESOURCE_DIR\" run build"
+    ],
+    "source": "functions"
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "/v1/admin/category{,/**}",
+        "function": "category"
+      },
+      {
+        "source": "/v1/admin/technology{,/**}",
+        "function": "category"
+      }
     ]
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }

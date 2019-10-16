@@ -13,8 +13,12 @@ const app: Application = express();
 app.use(cors({ origin: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(router);
 
-app.use(generateAPIError);
+const customRouter = (route?: express.Router) => {
+  app.use(router(route));
+  app.use(generateAPIError);
 
-export default app;
+  return app;
+};
+
+export default customRouter;

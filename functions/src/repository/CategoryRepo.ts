@@ -1,7 +1,6 @@
 import uuid from "uuid/v4";
 import { getDb } from "../utils/db";
 import { parseDbError } from "../utils/dbHelper";
-import { parseRow } from "../utils/helpers";
 import { STATUS_ACTIVE, STATUS_INACTIVE } from "../utils/constants";
 
 /**
@@ -95,16 +94,24 @@ export const fetchCategories = async () => {
   try {
     const categories = await getDb()
       .collection("categories")
+      .where("status", "==", STATUS_ACTIVE)
       .get();
 
-    const result = [];
-
-    categories.forEach(doc => {
-      result.push(parseRow(doc.data()));
-    });
-
-    return result;
+    return categories.docs.map(category => parseRow(category.data()));
   } catch (error) {
     throw parseDbError(error);
+  }
+};
+
+const parseRow = (row: FirebaseFirestore.DocumentData) => {
+  try {
+    return {
+      id: row.id,
+      name: row.name,
+      createdAt: row.createdAt.toDate(),
+      updatedAt: row.updatedAt.toDate(),
+    };
+  } catch (error) {
+    throw error;
   }
 };

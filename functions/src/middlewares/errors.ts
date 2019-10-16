@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { HTTP_INTERNAL_SERVER_ERROR } from "../utils/http_code";
-const env = process.env.NODE_ENV;
+const env = process.env.NODE_ENV || "local";
 
 const TAG = " functions/src/middlewares/errors.ts ===> ";
 

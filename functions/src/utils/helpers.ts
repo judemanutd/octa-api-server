@@ -50,23 +50,3 @@ export const parseCookies = (cookiePayload: string) => {
 
   return list;
 };
-
-/**
- * used to convert createdAt and updatedAt fields from firestore to human readable
- *
- * @param {any} row - document in firestore
- */
-export const parseRow = row => {
-  try {
-    if (row.createdAt) {
-      row.createdAt = row.createdAt.toDate();
-    }
-    if (row.updatedAt) {
-      row.updatedAt = row.updatedAt.toDate();
-    }
-
-    return row;
-  } catch (error) {
-    throw error;
-  }
-};

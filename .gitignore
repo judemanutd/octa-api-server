@@ -76,3 +76,7 @@ functions/node_modules
 typings/
 
 node_modules/
+
+octalogic-portfolio-dev-firebase.json
+
+.env

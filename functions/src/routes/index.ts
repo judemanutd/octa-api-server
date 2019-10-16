@@ -1,16 +1,14 @@
-import express, { Router } from "express";
+import express, { Router, Request, Response, NextFunction } from "express";
 import adminRoutes from "./adminRoutes";
-import { authorize } from "../utils/authHelpers";
-import { response, errorResponse } from "../utils/helpers";
-
-const TAG = " functions/src/routes/index.ts ===> ";
+import { authorize } from "../middlewares/authHelpers";
+import { routeNotFoundError } from "../exceptions/genericErrors";
 
 const router: Router = express.Router();
 
 router.use("/v1/admin", authorize(), adminRoutes);
 
-router.use("/*", (req, res) => {
-  return response(res, errorResponse("Unknown path"));
+router.use("/*", (req: Request, res: Response, next: NextFunction) => {
+  next(routeNotFoundError);
 });
 
 export default router;

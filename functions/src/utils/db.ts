@@ -10,6 +10,9 @@ export const connectToServer = firebaseFunctions => {
 
     store = admin.firestore();
 
+    const settings = { timestampsInSnapshots: true };
+    store.settings(settings);
+
     return store;
   } catch (error) {
     console.error(TAG, error);
@@ -17,4 +20,4 @@ export const connectToServer = firebaseFunctions => {
   }
 };
 
-export const getDb = () => store;
+export const getDb = (): FirebaseFirestore.Firestore => store;

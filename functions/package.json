@@ -1,15 +1,17 @@
 {
   "name": "functions",
+  "private": true,
   "scripts": {
-    "lint": "tslint --project tsconfig.json",
+    "lint": "npx tslint --project tsconfig.json",
     "build": "npx tsc",
     "build-watch": "npx tsc -w",
     "serve": "npm run build && firebase serve --only functions",
-    "serve-only": "firebase serve",
+    "serve-only": "export GOOGLE_APPLICATION_CREDENTIALS='../octalogic-portfolio-dev-firebase.json' && firebase serve",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "deploy-firestore-rules-only": "firebase deploy --only firestore:rules"
   },
   "engines": {
     "node": "10"
@@ -20,24 +22,25 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "firebase-admin": "^8.6.0",
-    "firebase-functions": "^3.2.0",
-    "helmet": "^3.21.1"
+    "firebase-functions": "^3.3.0",
+    "helmet": "^3.21.1",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.1",
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.1",
     "@types/helmet": "0.0.44",
-    "husky": "^3.0.8",
+    "@types/uuid": "^3.4.5",
+    "husky": "^3.0.9",
     "lint-staged": "^9.4.2",
     "prettier": "^1.18.2",
-    "pretty-quick": "^1.11.1",
+    "pretty-quick": "^2.0.0",
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.4"
   },
-  "private": true,
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"

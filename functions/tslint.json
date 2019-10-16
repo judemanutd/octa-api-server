@@ -9,6 +9,8 @@
     "ordered-imports": false,
     "no-console": false,
     "object-literal-sort-keys": false,
+    "no-submodule-imports": false,
+    "curly": false,
     "adjacent-overload-signatures": true,
     "ban-comma-operator": true,
     "no-namespace": true,

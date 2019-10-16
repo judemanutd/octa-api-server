@@ -1,6 +1,4 @@
-import express, { Request, Response, Router } from "express";
-
-const TAG = "functions/src/routes/publicRoutes/index.ts ===> ";
+import express, { Router } from "express";
 
 const router: Router = express.Router();
 

@@ -6,7 +6,7 @@
     "build": "npx tsc",
     "build-watch": "npx tsc -w",
     "serve": "npm run build && firebase serve --only functions",
-    "serve-only": "export GOOGLE_APPLICATION_CREDENTIALS='../octalogic-portfolio-dev-firebase.json' && firebase serve",
+    "serve-only": "export GOOGLE_APPLICATION_CREDENTIALS='../octalogic-portfolio-dev-firebase.json' && firebase emulators:start",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
@@ -21,9 +21,9 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "firebase-admin": "^8.6.0",
+    "firebase-admin": "^8.6.1",
     "firebase-functions": "^3.3.0",
-    "helmet": "^3.21.1",
+    "helmet": "^3.21.2",
     "uuid": "^3.3.3"
   },
   "devDependencies": {

@@ -1,20 +1,14 @@
 import express, { Router, Request, Response, NextFunction } from "express";
+import adminRoutes from "./adminRoutes";
 import { authorize } from "../middlewares/authHelpers";
 import { routeNotFoundError } from "../exceptions/genericErrors";
 
 const router: Router = express.Router();
 
-const customRouter = (route?: express.Router) => {
-  // if a route is specified then use that
-  if (route) {
-    router.use("/*", authorize(), route);
-  } else {
-    // throw route not found error
-    router.use("/*", (req: Request, res: Response, next: NextFunction) => {
-      next(routeNotFoundError);
-    });
-  }
-  return router;
-};
+router.use("/v1/admin", authorize(), adminRoutes);
 
-export default customRouter;
+router.use("/*", (req: Request, res: Response, next: NextFunction) => {
+  next(routeNotFoundError);
+});
+
+export default router;

@@ -1,0 +1,397 @@
+openapi: "3.0.2"
+info:
+  title: Octalogic Portfolio Dev API Server
+  version: "1.0"
+servers:
+  - url: https://us-central1-octalogic-portfolio-dev.cloudfunctions.net/api/v1/admin
+    description: Development Server
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the category
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: category name
+          example: Web Development
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    Client:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the category
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: client name
+          example: John Doe
+        address:
+          type: string
+          description: address of the client
+          example: India
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    Technology:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the technology
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: technology name
+          example: Node JS
+        category:
+          type: object
+          items:
+            $ref: "#/components/schemas/Category"
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    ItemInsertUpdateResponse:
+      type: object
+      properties:
+        payload:
+          type: object
+          properties:
+            id:
+              type: string
+              description: id of the item that was inserted/updated
+              example: 31765c4c-2606-4e1b-a613-7866212a86b6
+            message:
+              type: string
+              description: message for the operation
+              example: Successfully Added
+    Unauthorized:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 403
+            message:
+              type: string
+              example: Missing Authorization Credentials
+    GenericStringRequestBody:
+      type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: HTTP status code
+        application_code:
+          type: integer
+          format: int32
+          description: Application specific code
+        message:
+          type: string
+        stack:
+          type: object
+          description: stack trace or empty object depending on the environment
+  responses:
+    Error:
+      description: General Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnauthorizedError:
+      description: Unauthorized Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Unauthorized"
+    InsertUpdateResponse:
+      description: Successfull insert or update response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ItemInsertUpdateResponse"
+  parameters:
+    updateDelete:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+        description: id of the item that is being deleted or updated
+        example: 31765c4c-2606-4e1b-a613-7866212a86b6
+paths:
+  /category:
+    get:
+      tags:
+        - category
+      description: Fetches all categories in the system
+      summary: Fetches all categories in the system
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Category"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags:
+        - category
+      description: Insert a category
+      summary: Insert a category
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+              required:
+                - name
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /category/{id}:
+    put:
+      tags:
+        - category
+      description: Update a category
+      summary: Update a category
+      parameters:
+        - $ref: "#/components/parameters/updateDelete"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+              required:
+                - name
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - category
+      description: Delete a category
+      summary: Delete a category
+      parameters:
+        - $ref: "#/components/parameters/updateDelete"
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /technology:
+    get:
+      tags:
+        - technology
+      description: Fetches all technologies in the system
+      summary: Fetches all technologies in the system
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Technology"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags:
+        - technology
+      description: Insert a technology
+      summary: Insert a technology
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                categoryId:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                link:
+                  type: string
+                  description: link to the technology homepage
+              required:
+                - name
+                - categoryId
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /technology/{id}:
+    put:
+      tags:
+        - technology
+      description: Update a technology
+      summary: Update a technology
+      parameters:
+        - $ref: "#/components/parameters/updateDelete"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                categoryId:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                link:
+                  type: string
+                  description: link to the technology homepage
+              required:
+                - name
+                - categoryId
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - technology
+      description: Delete a technology
+      summary: Delete a technology
+      parameters:
+        - $ref: "#/components/parameters/updateDelete"
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /client:
+    get:
+      tags:
+        - client
+      description: Fetches all clients in the system
+      summary: Fetches all clients in the system
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Client"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags:
+        - client
+      description: add a client
+      summary: add a client
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                address:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+              required:
+                - name
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /client/{id}:
+    put:
+      tags:
+        - client
+      description: Update a clients details
+      summary: Update a clients details
+      parameters:
+        - $ref: "#/components/parameters/updateDelete"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                address:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+              required:
+                - name
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - client
+      description: Delete a client
+      summary: Delete a client
+      parameters:
+        - $ref: "#/components/parameters/updateDelete"
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"

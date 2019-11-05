@@ -7,7 +7,6 @@ let store: FirebaseFirestore.Firestore;
 export const connectToServer = firebaseFunctions => {
   try {
     admin.initializeApp(firebaseFunctions.config().firebase);
-
     store = admin.firestore();
 
     const settings = { timestampsInSnapshots: true };

@@ -9,8 +9,8 @@ const app: Application = express();
 
 // Automatically allow cross-origin requests
 app.use(cors({ origin: true }));
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use(router);
 app.use(generateAPIError);

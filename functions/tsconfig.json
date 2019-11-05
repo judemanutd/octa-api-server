@@ -4,6 +4,7 @@
     "noImplicitReturns": false,
     "noUnusedLocals": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "outDir": "lib",
     "sourceMap": true,
     "pretty": true,

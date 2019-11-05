@@ -16,7 +16,7 @@ export const generateAPIError = (
   const errObj = {
     code: error.status || HTTP_INTERNAL_SERVER_ERROR,
     message: error.message || "Internal Server Error",
-    application_code: error.code,
+    application_code: error.code || null,
     stack: env === "development" || env === "local" ? error.stack : {},
   };
 
@@ -24,7 +24,7 @@ export const generateAPIError = (
     delete errObj.stack;
   }
 
-  return response.status(error.status).json({
+  return response.status(error.status || HTTP_INTERNAL_SERVER_ERROR).json({
     error: errObj,
   });
 };

@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import server from "./app";
+import docsServer from "./docs";
 import { connectToServer } from "./utils/db";
 
 connectToServer(functions);
@@ -9,3 +10,9 @@ export const api = functions
     memory: "2GB",
   })
   .https.onRequest(server);
+
+export const docs = functions
+  .runWith({
+    memory: "2GB",
+  })
+  .https.onRequest(docsServer);

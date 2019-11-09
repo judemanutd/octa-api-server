@@ -68,9 +68,98 @@ components:
           description: technology name
           example: Node JS
         category:
+          $ref: "#/components/schemas/Category"
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    CloudStorageObject:
+      type: object
+      properties:
+        selfLink:
+          type: string
+          description: private link to the image on google cloud
+          example: https://www.googleapis.com/storage/v1/b/octalogic/o/public%2Fimages%2Fe140073a-092e-48dd-8159-c0a67b617894/acl/allUsers
+        bucket:
+          type: string
+          description: bucket name that contains the image
+          example: octalogic
+        object:
+          type: string
+          description: path to the image
+          example: public/images/e140073a-092e-48dd-8159-c0a67b617894
+        id:
+          type: string
+          description: google cloud id for the image
+          example: octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894/1572794432393307/allUsers
+        role:
+          type: string
+          description: role assigned to the iamge
+          example: READER
+        kind:
+          type: string
+          example: storage#objectAccessControl
+        etag:
+          type: string
+          example: CNugyuurzuUCEAI=
+        entity:
+          type: string
+          example: allUsers
+        generation:
+          type: string
+          example: 1572794432393307
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the project
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: project name
+          example: Order For Me
+        cover:
           type: object
-          items:
-            $ref: "#/components/schemas/Category"
+          properties:
+            link:
+              type: string
+              description: public link for the cover image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+            meta:
+              $ref: "#/components/schemas/CloudStorageObject"
+        logo:
+          type: object
+          properties:
+            link:
+              type: string
+              description: public link for the logo image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+            meta:
+              $ref: "#/components/schemas/CloudStorageObject"
+        client:
+          type: object
+          $ref: "#/components/schemas/Client"
+        startDate:
+          type: string
+          description: project start date ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        endDate:
+          type: string
+          description: project end date ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        cost:
+          type: number
+          description: cost of the project
+          example: 150000
+        currency:
+          type: string
+          description: currency the project was billed in
+          example: $
         createdAt:
           type: string
           description: created at ISO string
@@ -93,6 +182,26 @@ components:
               type: string
               description: message for the operation
               example: Successfully Added
+    FileUploadResponse:
+      type: object
+      properties:
+        payload:
+          type: object
+          properties:
+            message:
+              type: string
+              description: message for the operation
+              example: Successfully uploaded
+    FileDeleteResponse:
+      type: object
+      properties:
+        payload:
+          type: object
+          properties:
+            message:
+              type: string
+              description: message for the operation
+              example: Successfully deleted
     Unauthorized:
       type: object
       properties:
@@ -144,6 +253,18 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ItemInsertUpdateResponse"
+    FileUploadSuccess:
+      description: Successfull uploaded a file
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/FileUploadResponse"
+    FileDeleteSuccess:
+      description: Successfull deleted a file
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/FileDeleteResponse"
   parameters:
     updateDelete:
       in: path
@@ -152,6 +273,14 @@ components:
       schema:
         type: string
         description: id of the item that is being deleted or updated
+        example: 31765c4c-2606-4e1b-a613-7866212a86b6
+    projectId:
+      in: path
+      name: projectId
+      required: true
+      schema:
+        type: string
+        description: id of the project that is being modified
         example: 31765c4c-2606-4e1b-a613-7866212a86b6
 paths:
   /category:
@@ -393,5 +522,165 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /project:
+    get:
+      tags:
+        - project
+      description: Fetches all projects in the system
+      summary: Fetches all projects in the system
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Project"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags:
+        - project
+      description: Quick add a project
+      summary: Quick add a project, this is the initial call that needs to be made in order to create a project in the system.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                clientId:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                startDate:
+                  type: string
+                  description: ISO string start date of the project
+                  example: "2019-10-13T07:47:09.376Z"
+                endDate:
+                  type: string
+                  description: ISO string end date of the project
+                  example: "2019-10-13T07:47:09.376Z"
+                cost:
+                  type: number
+                  description: total cost for the project
+                currency:
+                  type: string
+                  description: currency for the project
+              required:
+                - name
+                - clientId
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /project/{projectId}:
+    get:
+      tags:
+        - project
+      description: fetch a single project in the system
+      summary: fetch a single project in the system
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    $ref: "#/components/schemas/Project"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - project
+      description: Archive a project
+      summary: Archives a project and deletes all related media
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /project/cover/{projectId}:
+    post:
+      tags:
+        - project
+      description: Add a cover image to an existing project
+      summary: Add a cover image to an existing project, this will overwrite any existing cover image
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cover:
+                  format: binary
+                  description: image file for the cover
+              required:
+                - cover
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - project
+      description: Delete a cover image for a project
+      summary: Delete a cover image for a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          $ref: "#/components/responses/FileDeleteSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /project/logo/{projectId}:
+    post:
+      tags:
+        - project
+      description: Add a logo image to an existing project
+      summary: Add a logo image to an existing project, this will overwrite any existing logo image
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cover:
+                  format: binary
+                  description: image file for the logo
+              required:
+                - cover
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - project
+      description: Delete a logo image for a project
+      summary: Delete a logo image for a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          $ref: "#/components/responses/FileDeleteSuccess"
         401:
           $ref: "#/components/responses/UnauthorizedError"

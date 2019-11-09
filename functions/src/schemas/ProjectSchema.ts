@@ -12,19 +12,29 @@ const projectSchema = () =>
         link: string().required(),
         meta: cloudStorageUploadSchema().required(),
       })
+      .default(() => null)
+      .nullable(),
+    logo: object()
+      .shape({
+        link: string().required(),
+        meta: cloudStorageUploadSchema().required(),
+      })
+      .default(() => null)
       .nullable(),
     startDate: date()
       .default(() => {
-        return new Date();
+        return null;
       })
       .nullable(),
     endDate: date()
-      .default(() => {
-        return new Date();
-      })
+      .default(() => null)
       .nullable(),
-    cost: number().nullable(),
-    currency: string().nullable(),
+    cost: number()
+      .default(() => 0)
+      .nullable(),
+    currency: string()
+      .default(() => null)
+      .nullable(),
     createdAt: date()
       .default(() => {
         return new Date();

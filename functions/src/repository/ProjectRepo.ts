@@ -22,34 +22,15 @@ import Project from "../models/Project";
 export const addProject = async (
   name: string,
   clientId: string,
-  // coverImageObject: IMakePublicResponse,
   startDate?: Date,
   endDate?: Date,
   cost?: number,
   currency?: string,
 ) => {
   try {
-    // const id = uuid();
-
-    /* const client = await getDb()
-      .collection("clients")
-      .doc(clientId)
-      .get();
-
-    if (!client.exists) throw entityNotFoundError("Client not found"); */
-
     const clientRef = getDb()
       .collection("clients")
       .doc(clientId);
-
-    /* const insertObj: any = {
-      id,
-      name,
-      client: clientRef,
-      status: STATUS_ACTIVE,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }; */
 
     const insertObj = Project.init(name, clientRef);
 
@@ -74,7 +55,7 @@ export const addProject = async (
 /**
  * ADMIN
  *
- * checks if a project exists that is active
+ * update the cover image for a project, handles both adding and deleting an image
  *
  * @param {string} projectId - id of the project
  * @param {ICloudStorageUploadResponse} file - optional upload response from google cloud storage
@@ -130,6 +111,62 @@ export const updatedCoverImage = async (projectId: string, file?: ICloudStorageU
 /**
  * ADMIN
  *
+ * update the logo for a project, handles both adding and deleting an image
+ *
+ * @param {string} projectId - id of the project
+ * @param {ICloudStorageUploadResponse} file - optional upload response from google cloud storage
+ */
+export const updatedLogoImage = async (projectId: string, file?: ICloudStorageUploadResponse) => {
+  try {
+    const project = await getDb()
+      .collection("projects")
+      .doc(projectId)
+      .get();
+
+    if (!project.exists || (project.exists && project.data().status !== STATUS_ACTIVE))
+      throw entityNotFoundError("Project does not exisst");
+
+    if (file) {
+      // add logo image
+      const publicLink = generatePublicLink(file);
+
+      await getDb()
+        .collection("projects")
+        .doc(projectId)
+        .update({
+          logo: {
+            link: generatePublicLink(file),
+            meta: file,
+          },
+          updatedAt: new Date(),
+        });
+
+      return {
+        link: publicLink,
+        message: "Successfully uploaded",
+      };
+    } else {
+      // delete logo image
+      await getDb()
+        .collection("projects")
+        .doc(projectId)
+        .update({
+          logo: null,
+          updatedAt: new Date(),
+        });
+
+      return {
+        message: "Successfully deleted",
+      };
+    }
+  } catch (error) {
+    throw parseDbError(error);
+  }
+};
+
+/**
+ * ADMIN
+ *
  * fetch all projects in the system
  *
  */
@@ -161,7 +198,6 @@ export const fetchProject = async (projectId: string) => {
       .collection("projects")
       .doc(projectId)
       .get();
-    // console.log("TCL: fetchProject -> project", project);
 
     if (!project.exists || (project.exists && project.data().status !== STATUS_ACTIVE))
       throw entityNotFoundError("Project does not exisst");
@@ -172,8 +208,33 @@ export const fetchProject = async (projectId: string) => {
   }
 };
 
+/**
+ * ADMIN
+ *
+ * archive a single project
+ *
+ * @param {string} projectId - id of the project
+ */
+export const archiveProject = async (projectId: string) => {
+  try {
+    await getDb()
+      .collection("projects")
+      .doc(projectId)
+      .update({
+        status: STATUS_INACTIVE,
+        updatedAt: new Date(),
+      });
+
+    return {
+      id: projectId,
+      message: "Successfully Archived",
+    };
+  } catch (error) {
+    throw parseDbError(error);
+  }
+};
+
 const parseRow = async (row: FirebaseFirestore.DocumentData) => {
-  // console.log("TCL: parseRow -> row", row);
   try {
     const client: FirebaseFirestore.DocumentSnapshot = await row.client.get();
     row.client = client.exists ? client.data() : null;
@@ -185,33 +246,6 @@ const parseRow = async (row: FirebaseFirestore.DocumentData) => {
     row.updatedAt = row.updatedAt.toDate();
 
     return new Project(row);
-    /*     const client: FirebaseFirestore.DocumentSnapshot = await row.client.get();
-    row.client = client.exists ? client.data() : null;
-
-    const obj: IProject = {
-      id: row.id,
-      name: row.name,
-      client:
-        row.client !== null
-          ? {
-              id: row.client.id,
-              name: row.client.name,
-              address: row.client.address,
-              createdAt: row.client.createdAt.toDate(),
-              updatedAt: row.client.updatedAt.toDate(),
-            }
-          : null,
-      cover: row.cover
-        ? {
-            link: row.cover.link,
-            meta: row.cover.meta,
-          }
-        : null,
-      createdAt: row.createdAt.toDate(),
-      updatedAt: row.updatedAt.toDate(),
-    };
-
-    return obj; */
   } catch (error) {
     throw error;
   }

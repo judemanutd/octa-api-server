@@ -6,23 +6,7 @@ import { receiveFiles } from "../../utils/multerHelper";
 import ProjectController from "../../controllers/ProjectController";
 
 const router: Router = express.Router();
-
-/* const storage = multer.diskStorage({
-  destination: (request, file, callback) => {
-    console.log("TCL", file);
-    callback(null, PUBLIC_UPLOAD_PATH);
-  },
-  filename: (request, file, callback) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    console.log("TCL", ext);
-    const fileName = uuid() + "_" + ext;
-    callback(null, fileName);
-  },
-}); */
-
-/* const upload = multer({
-  storage: multer.memoryStorage(),
-}); */
+const projectController: ProjectController = new ProjectController();
 
 const multerOptions: any = {
   storage: multer.memoryStorage(),
@@ -49,12 +33,6 @@ const multerOptions: any = {
 };
 
 const multipartFormDataParser = multer(multerOptions).any();
-
-// const upload = multer({ dest: "uploads/" });
-
-const projectController: ProjectController = new ProjectController();
-
-// router.use(multer({ storage: multer.memoryStorage() }).single("profile"));
 
 // add a cover image to a project
 router.post("/cover/:projectId", async (req: Request, res: Response, next: NextFunction) => {
@@ -84,14 +62,37 @@ router.delete("/cover/:projectId", async (req: Request, res: Response, next: Nex
   }
 });
 
+// add a logo image to a project
+router.post("/logo/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const uploads = await receiveFiles(multipartFormDataParser, req, res);
+
+    const projectId = req.params.projectId;
+
+    const result = await projectController.addLogo(projectId, uploads);
+
+    return response(res, successResponse(result));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// delete logo image for a project
+router.delete("/logo/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const projectId = req.params.projectId;
+
+    const result = await projectController.deleteLogoImage(projectId);
+
+    return response(res, successResponse(result));
+  } catch (error) {
+    next(error);
+  }
+});
+
 // quick add a project, called when creating a new basic project
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // const uploads = await receiveFiles(multipartFormDataParser, req, res);
-
-    // const coverImage = req.files.length === 1 ? req.files[0] : undefined;
-    // console.log("TCL: coverImage", coverImage);
-
     const name = req.body.name;
     const clientId = req.body.clientId;
     const startDate = req.body.startDate;
@@ -107,6 +108,32 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
       cost,
       currency,
     );
+
+    return response(res, successResponse(result));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// archive a single project in the system
+router.delete("/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const projectId = req.params.projectId;
+
+    const result = await projectController.archiveProject(projectId);
+
+    return response(res, successResponse(result));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// fetch a single project in the system
+router.get("/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const projectId = req.params.projectId;
+
+    const result = await projectController.fetchProject(projectId);
 
     return response(res, successResponse(result));
   } catch (error) {

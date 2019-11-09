@@ -1,4 +1,3 @@
-// import { string, object } from "yup";
 import uuid from "uuid/v4";
 import Client from "./Client";
 import projectSchema from "../schemas/ProjectSchema";
@@ -13,6 +12,7 @@ class Project {
       id,
       name,
       cover: null,
+      logo: null,
       startDate: null,
       endDate: null,
       cost: 0,
@@ -31,12 +31,16 @@ class Project {
     link: string;
     meta: ICloudStorageUploadResponse;
   };
-  public startDate: string;
-  public endDate: string;
+  public logo: {
+    link: string;
+    meta: ICloudStorageUploadResponse;
+  };
+  public startDate: Date;
+  public endDate: Date;
   public cost: number;
   public currency: string;
-  public createdAt: string;
-  public updatedAt: string;
+  public createdAt: Date;
+  public updatedAt: Date;
 
   constructor(payload) {
     try {
@@ -44,6 +48,7 @@ class Project {
       this.id = validatedPayload.id;
       this.name = validatedPayload.name;
       this.cover = validatedPayload.cover;
+      this.logo = validatedPayload.logo;
       this.client = new Client(validatedPayload.client);
       this.startDate = validatedPayload.startDate;
       this.endDate = validatedPayload.endDate;

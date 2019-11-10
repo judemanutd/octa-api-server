@@ -181,7 +181,7 @@ components:
             message:
               type: string
               description: message for the operation
-              example: Successfully Added
+              example: Successfully Added/Updated
     FileUploadResponse:
       type: object
       properties:
@@ -216,6 +216,34 @@ components:
             message:
               type: string
               example: Missing Authorization Credentials
+    ClientNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Client does not exist
+    EntityNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Entity not found
     GenericStringRequestBody:
       type: string
     Error:
@@ -247,6 +275,18 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Unauthorized"
+    ClientNotFoundError:
+      description: Client Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClientNotFound"
+    EntityNotFoundError:
+      description: Entity Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EntityNotFound"
     InsertUpdateResponse:
       description: Successfull insert or update response
       content:
@@ -346,6 +386,8 @@ paths:
           $ref: "#/components/responses/InsertUpdateResponse"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
     delete:
       tags:
         - category
@@ -358,6 +400,8 @@ paths:
           $ref: "#/components/responses/InsertUpdateResponse"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
   /technology:
     get:
       tags:
@@ -433,6 +477,8 @@ paths:
           $ref: "#/components/responses/InsertUpdateResponse"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
     delete:
       tags:
         - technology
@@ -445,6 +491,8 @@ paths:
           $ref: "#/components/responses/InsertUpdateResponse"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
   /client:
     get:
       tags:
@@ -512,6 +560,8 @@ paths:
           $ref: "#/components/responses/InsertUpdateResponse"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
     delete:
       tags:
         - client
@@ -524,6 +574,8 @@ paths:
           $ref: "#/components/responses/InsertUpdateResponse"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
   /project:
     get:
       tags:
@@ -587,6 +639,8 @@ paths:
         - project
       description: fetch a single project in the system
       summary: fetch a single project in the system
+      parameters:
+        - $ref: "#/components/parameters/projectId"
       responses:
         200:
           description: Successful response
@@ -599,6 +653,62 @@ paths:
                     $ref: "#/components/schemas/Project"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
+    put:
+      tags:
+        - project
+      description: updates the text attributes only of a project, cover, logo and gallery are updated in their own endpoints
+      summary: updates the text attributes only of a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                clientId:
+                  $ref: "#/components/schemas/GenericStringRequestBody"
+                startDate:
+                  type: string
+                  description: ISO string start date of the project
+                  example: "2019-10-13T07:47:09.376Z"
+                endDate:
+                  type: string
+                  description: ISO string end date of the project
+                  example: "2019-10-13T07:47:09.376Z"
+                cost:
+                  type: number
+                  description: total cost for the project
+                currency:
+                  type: string
+                  description: currency for the project
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          description: Error thrown when the client or the project does not exist
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/responses/ClientNotFoundError"
+              examples:
+                clientNotFound:
+                  summary: Client does not exist error
+                  value:
+                    code: 404
+                    message: Client does not exist
+                ProjectNotFound:
+                  summary: Project does not exist error
+                  value:
+                    code: 404
+                    message: Project does not exist
     delete:
       tags:
         - project
@@ -611,7 +721,8 @@ paths:
           $ref: "#/components/responses/InsertUpdateResponse"
         401:
           $ref: "#/components/responses/UnauthorizedError"
-
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
   /project/cover/{projectId}:
     post:
       tags:
@@ -636,6 +747,8 @@ paths:
           $ref: "#/components/responses/FileUploadSuccess"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
     delete:
       tags:
         - project
@@ -648,6 +761,8 @@ paths:
           $ref: "#/components/responses/FileDeleteSuccess"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
   /project/logo/{projectId}:
     post:
       tags:
@@ -662,7 +777,7 @@ paths:
             schema:
               type: object
               properties:
-                cover:
+                logo:
                   format: binary
                   description: image file for the logo
               required:
@@ -672,6 +787,8 @@ paths:
           $ref: "#/components/responses/FileUploadSuccess"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
     delete:
       tags:
         - project
@@ -684,3 +801,5 @@ paths:
           $ref: "#/components/responses/FileDeleteSuccess"
         401:
           $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"

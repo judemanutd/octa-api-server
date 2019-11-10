@@ -1,8 +1,9 @@
 import admin from "firebase-admin";
 import uuid from "uuid/v4";
-import { PUBLIC_UPLOAD_PATH } from "../utils/constants";
-import { ICloudStorageUploadResponse } from "../interfaces/ICloudStorageUploadResponse";
-import { IMulterFileUpload } from "../interfaces/IMulterFileUpload";
+import { PUBLIC_UPLOAD_PATH } from "~utils/constants";
+import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResponse";
+import { IMulterFileUpload } from "~interfaces/IMulterFileUpload";
+// tslint:disable-next-line: no-implicit-dependencies
 import { MakeFilePublicResponse } from "@google-cloud/storage";
 
 /**

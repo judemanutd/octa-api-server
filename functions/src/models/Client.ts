@@ -1,6 +1,6 @@
 import uuid from "uuid/v4";
-import clientSchema from "../schemas/ClientSchema";
-import { STATUS_ACTIVE } from "../utils/constants";
+import clientSchema from "~schemas/ClientSchema";
+import { STATUS_ACTIVE } from "~utils/constants";
 
 class Client {
   public static init = (name: string, address?: string) => {
@@ -19,8 +19,8 @@ class Client {
   public id: string;
   public name: string;
   public address: string;
-  public createdAt: string;
-  public updatedAt: string;
+  public createdAt: Date;
+  public updatedAt: Date;
 
   constructor(payload) {
     const validatedPayload = this.validate(payload);

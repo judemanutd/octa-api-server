@@ -1,12 +1,12 @@
-import { setRequired } from "../utils/helpers";
-import { missingParametersError } from "../exceptions/genericErrors";
+import { setRequired } from "~utils/helpers";
+import { missingParametersError } from "~exceptions/genericErrors";
 import {
   addClient,
   updateClient,
   archiveClient,
   fetchClients,
   fetchClient,
-} from "../repository/ClientRepo";
+} from "~repository/ClientRepo";
 
 export default class ClientController {
   /**

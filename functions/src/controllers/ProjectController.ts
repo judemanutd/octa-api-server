@@ -1,7 +1,7 @@
 import moment from "moment";
-import { setRequired } from "../utils/helpers";
-import { missingParametersError, invalidDateError } from "../exceptions/genericErrors";
-import { uploadFile, deleteFile } from "../utils/fileHelper";
+import { setRequired } from "~utils/helpers";
+import { missingParametersError, invalidDateError } from "~exceptions/genericErrors";
+import { uploadFile, deleteFile } from "~utils/fileHelper";
 import {
   addProject,
   fetchProject,
@@ -9,9 +9,10 @@ import {
   fetchAllProjects,
   updatedLogoImage,
   archiveProject,
-} from "../repository/ProjectRepo";
-import ClientController from "../controllers/ClientController";
-import { IMulterFileUpload } from "../interfaces/IMulterFileUpload";
+  updateProject,
+} from "~repository/ProjectRepo";
+import ClientController from "~controllers/ClientController";
+import { IMulterFileUpload } from "~interfaces/IMulterFileUpload";
 
 const clientController: ClientController = new ClientController();
 
@@ -57,6 +58,66 @@ export default class ProjectController {
       await clientController.fetchClient(clientId);
 
       const response = await addProject(
+        name,
+        clientId,
+        startDate ? startDatePayload.toDate() : undefined,
+        endDate ? endDatePayload.toDate() : undefined,
+        cost,
+        currency,
+      );
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * update a projects details
+   *
+   * @param {string} projectId - id of the project that is being updated
+   * @param {string} name - name of the project
+   * @param {string} clientId - client id to whom the probject belongs
+   * @param {string} startDate - start date of the project
+   * @param {string} endDate - end date of the project
+   * @param {number} cost - project cost
+   * @param {string} currency - currecy
+   */
+  public updateProject = async (
+    projectId: string,
+    name?: string,
+    clientId?: string,
+    startDate?: string,
+    endDate?: string,
+    cost?: number,
+    currency?: string,
+  ) => {
+    try {
+      const isValid = setRequired(projectId);
+      if (!isValid) throw missingParametersError("Missing project id");
+
+      let startDatePayload: moment.Moment;
+      let endDatePayload: moment.Moment;
+
+      if (startDate) {
+        startDatePayload = moment(startDate, moment.ISO_8601, true);
+        if (!startDatePayload.isValid()) throw invalidDateError("Invalid start date");
+      }
+
+      if (endDate) {
+        endDatePayload = moment(endDate, moment.ISO_8601, true);
+        if (!endDatePayload.isValid()) throw invalidDateError("Invalid end date");
+      }
+
+      if (clientId) {
+        // check if client exists before performing any operations
+        await clientController.fetchClient(clientId);
+      }
+
+      const response = await updateProject(
+        projectId,
         name,
         clientId,
         startDate ? startDatePayload.toDate() : undefined,

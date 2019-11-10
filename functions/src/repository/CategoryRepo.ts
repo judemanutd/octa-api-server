@@ -1,7 +1,7 @@
 import uuid from "uuid/v4";
-import { getDb } from "../utils/db";
-import { parseDbError } from "../utils/dbHelper";
-import { STATUS_ACTIVE, STATUS_INACTIVE } from "../utils/constants";
+import { getDb } from "~utils/db";
+import { parseDbError } from "~utils/dbHelper";
+import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
 
 /**
  * ADMIN

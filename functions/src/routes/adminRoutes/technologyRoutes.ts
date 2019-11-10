@@ -1,6 +1,6 @@
 import express, { Request, Response, Router, NextFunction } from "express";
-import { response, successResponse } from "../../utils/helpers";
-import TechnologyController from "../../controllers/TechnologyController";
+import { response, successResponse } from "~utils/helpers";
+import TechnologyController from "~controllers/TechnologyController";
 
 const router: Router = express.Router();
 

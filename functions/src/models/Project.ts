@@ -1,8 +1,8 @@
 import uuid from "uuid/v4";
 import Client from "./Client";
-import projectSchema from "../schemas/ProjectSchema";
-import { ICloudStorageUploadResponse } from "../interfaces/ICloudStorageUploadResponse";
-import { STATUS_ACTIVE } from "../utils/constants";
+import projectSchema from "~schemas/ProjectSchema";
+import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResponse";
+import { STATUS_ACTIVE } from "~utils/constants";
 
 class Project {
   public static init = (name: string, clientRef: FirebaseFirestore.DocumentReference) => {

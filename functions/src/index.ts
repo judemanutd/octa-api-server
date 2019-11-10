@@ -1,3 +1,5 @@
+// tslint:disable-next-line: no-import-side-effect
+import "module-alias/register";
 import * as functions from "firebase-functions";
 import server from "./app";
 import docsServer from "./docs";

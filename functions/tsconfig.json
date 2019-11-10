@@ -1,5 +1,17 @@
 {
   "compilerOptions": {
+    "incremental": true,
+    "baseUrl": "src",
+    "paths": {
+      "~controllers/*": ["controllers/*"],
+      "~models/*": ["models/*"],
+      "~repository/*": ["repository/*"],
+      "~schemas/*": ["schemas/*"],
+      "~utils/*": ["utils/*"],
+      "~middlewares/*": ["middlewares/*"],
+      "~exceptions/*": ["exceptions/*"],
+      "~interfaces/*": ["interfaces/*"]
+    },
     "module": "commonjs",
     "noImplicitReturns": false,
     "noUnusedLocals": true,

@@ -1,6 +1,6 @@
 import { string, object, number, date } from "yup";
-import clientSchema from "../schemas/ClientSchema";
-import cloudStorageUploadSchema from "../schemas/CloudStorageUploadSchema";
+import clientSchema from "~schemas/ClientSchema";
+import cloudStorageUploadSchema from "~schemas/CloudStorageUploadSchema";
 
 const projectSchema = () =>
   object().shape({

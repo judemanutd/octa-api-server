@@ -3,9 +3,9 @@ import {
   fetchCategories,
   updateCategory,
   archiveCategory,
-} from "../repository/CategoryRepo";
-import { setRequired } from "../utils/helpers";
-import { missingParametersError } from "../exceptions/genericErrors";
+} from "~repository/CategoryRepo";
+import { setRequired } from "~utils/helpers";
+import { missingParametersError } from "~exceptions/genericErrors";
 
 export default class CategoryController {
   /**

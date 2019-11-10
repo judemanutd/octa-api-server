@@ -1,8 +1,8 @@
-import { getDb } from "../utils/db";
-import { parseDbError } from "../utils/dbHelper";
-import { STATUS_ACTIVE, STATUS_INACTIVE } from "../utils/constants";
-import { entityNotFoundError } from "../exceptions/genericErrors";
-import Client from "../models/Client";
+import { getDb } from "~utils/db";
+import { parseDbError } from "~utils/dbHelper";
+import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
+import { entityNotFoundError } from "~exceptions/genericErrors";
+import Client from "~models/Client";
 
 /**
  * ADMIN
@@ -98,7 +98,7 @@ export const fetchClient = async (clientId: string) => {
       .get();
 
     if (!client.exists || (client.exists && client.data().status !== STATUS_ACTIVE))
-      throw entityNotFoundError("Client does not exisst");
+      throw entityNotFoundError("Client does not exist");
 
     return parseRow(client.data());
   } catch (error) {

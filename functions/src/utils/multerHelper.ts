@@ -1,5 +1,5 @@
 import { Request, Response, RequestHandler } from "express";
-import { IMulterFileUpload } from "../interfaces/IMulterFileUpload";
+import { IMulterFileUpload } from "~interfaces/IMulterFileUpload";
 
 /**
  * middleware handler for multer upload with error handling

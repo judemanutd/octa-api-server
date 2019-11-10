@@ -1,11 +1,10 @@
-import { getDb } from "../utils/db";
-import { ICloudStorageUploadResponse } from "../interfaces/ICloudStorageUploadResponse";
-import { parseDbError } from "../utils/dbHelper";
-import { STATUS_ACTIVE, STATUS_INACTIVE } from "../utils/constants";
-import { entityNotFoundError } from "../exceptions/genericErrors";
-import { generatePublicLink } from "../utils/fileHelper";
-// import { IProject } from "../interfaces/IProject";
-import Project from "../models/Project";
+import { getDb } from "~utils/db";
+import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResponse";
+import { parseDbError } from "~utils/dbHelper";
+import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
+import { entityNotFoundError } from "~exceptions/genericErrors";
+import { generatePublicLink } from "~utils/fileHelper";
+import Project from "~models/Project";
 
 /**
  * ADMIN
@@ -55,6 +54,60 @@ export const addProject = async (
 /**
  * ADMIN
  *
+ * update a projects details
+ *
+ * @param {string} projectId - id of the project that is being updated
+ * @param {string} name - name of the project
+ * @param {string} clientId - client id to whom the probject belongs
+ * @param {string} startDate - start date of the project
+ * @param {string} endDate - end date of the project
+ * @param {number} cost - project cost
+ * @param {string} currency - currecy
+ */
+export const updateProject = async (
+  projectId: string,
+  name?: string,
+  clientId?: string,
+  startDate?: Date,
+  endDate?: Date,
+  cost?: number,
+  currency?: string,
+) => {
+  try {
+    const obj: any = {};
+
+    if (name) obj.name = name;
+    if (clientId) {
+      obj.client = getDb()
+        .collection("clients")
+        .doc(clientId);
+    }
+    if (startDate) obj.startDate = startDate;
+    if (endDate) obj.endDate = endDate;
+    if (cost) obj.cost = cost;
+    if (currency) obj.currency = currency;
+
+    if (Object.keys(obj).length > 0) {
+      obj.updatedAt = new Date();
+
+      await getDb()
+        .collection("projects")
+        .doc(projectId)
+        .update(obj);
+    }
+
+    return {
+      id: projectId,
+      message: "Successfully Updated",
+    };
+  } catch (error) {
+    throw parseDbError(error);
+  }
+};
+
+/**
+ * ADMIN
+ *
  * update the cover image for a project, handles both adding and deleting an image
  *
  * @param {string} projectId - id of the project
@@ -68,7 +121,7 @@ export const updatedCoverImage = async (projectId: string, file?: ICloudStorageU
       .get();
 
     if (!project.exists || (project.exists && project.data().status !== STATUS_ACTIVE))
-      throw entityNotFoundError("Project does not exisst");
+      throw entityNotFoundError("Project does not exist");
 
     if (file) {
       // add cover image
@@ -124,7 +177,7 @@ export const updatedLogoImage = async (projectId: string, file?: ICloudStorageUp
       .get();
 
     if (!project.exists || (project.exists && project.data().status !== STATUS_ACTIVE))
-      throw entityNotFoundError("Project does not exisst");
+      throw entityNotFoundError("Project does not exist");
 
     if (file) {
       // add logo image
@@ -200,7 +253,7 @@ export const fetchProject = async (projectId: string) => {
       .get();
 
     if (!project.exists || (project.exists && project.data().status !== STATUS_ACTIVE))
-      throw entityNotFoundError("Project does not exisst");
+      throw entityNotFoundError("Project does not exist");
 
     return parseRow(project.data());
   } catch (error) {

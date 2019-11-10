@@ -2,7 +2,7 @@ import express, { Application } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import router from "./routes";
-import { generateAPIError } from "./middlewares/errors";
+import { generateAPIError } from "~middlewares/errors";
 
 // Express configuration
 const app: Application = express();

@@ -1,9 +1,9 @@
 import express, { Request, Response, Router, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
-import { response, successResponse } from "../../utils/helpers";
-import { receiveFiles } from "../../utils/multerHelper";
-import ProjectController from "../../controllers/ProjectController";
+import { response, successResponse } from "~utils/helpers";
+import { receiveFiles } from "~utils/multerHelper";
+import ProjectController from "~controllers/ProjectController";
 
 const router: Router = express.Router();
 const projectController: ProjectController = new ProjectController();
@@ -115,12 +115,27 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-// archive a single project in the system
-router.delete("/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+// update project details
+router.put("/:projectId", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const projectId = req.params.projectId;
 
-    const result = await projectController.archiveProject(projectId);
+    const name = req.body.name;
+    const clientId = req.body.clientId;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const cost = req.body.cost;
+    const currency = req.body.currency;
+
+    const result = await projectController.updateProject(
+      projectId,
+      name,
+      clientId,
+      startDate,
+      endDate,
+      cost,
+      currency,
+    );
 
     return response(res, successResponse(result));
   } catch (error) {
@@ -134,6 +149,19 @@ router.get("/:projectId", async (req: Request, res: Response, next: NextFunction
     const projectId = req.params.projectId;
 
     const result = await projectController.fetchProject(projectId);
+
+    return response(res, successResponse(result));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// archive a single project in the system
+router.delete("/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const projectId = req.params.projectId;
+
+    const result = await projectController.archiveProject(projectId);
 
     return response(res, successResponse(result));
   } catch (error) {

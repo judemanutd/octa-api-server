@@ -9,7 +9,7 @@
     "serve-only": "export GOOGLE_APPLICATION_CREDENTIALS='../octalogic-portfolio-dev-firebase.json' && firebase serve",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "cp ../admin_api_doc.dev.yml ./lib && firebase deploy",
     "logs": "firebase functions:log",
     "deploy-firestore-rules-only": "firebase deploy --only firestore:rules"
   },

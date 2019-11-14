@@ -4,8 +4,6 @@ name: CI
 on:
   push:
     branches:
-      - "!develop" # excludes develop
-      - "!master" # excludes master
       - "*" # matches every branch
   pull_request:
     branches:

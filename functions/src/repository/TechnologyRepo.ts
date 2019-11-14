@@ -1,8 +1,9 @@
 import uuid from "uuid/v4";
-import { getDb } from "../utils/db";
-import { parseDbError } from "../utils/dbHelper";
-import { entityNotFoundError } from "../exceptions/genericErrors";
-import { STATUS_ACTIVE, STATUS_INACTIVE } from "../utils/constants";
+import { getDb } from "~utils/db";
+import { parseDbError } from "~utils/dbHelper";
+import { entityNotFoundError } from "~exceptions/genericErrors";
+import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
+import Technology from "~models/Technology";
 
 /**
  * ADMIN
@@ -24,23 +25,18 @@ export const addTechnology = async (name: string, categoryId: string, link?: str
 
     if (!category.exists) throw entityNotFoundError("Category not found");
 
-    const obj: any = {
-      id,
-      name,
-      category: getDb()
-        .collection("categories")
-        .doc(categoryId),
-      status: STATUS_ACTIVE,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    if (link) obj.link = link;
-
     await getDb()
       .collection("technologies")
       .doc(id)
-      .set(obj);
+      .set(
+        Technology.init(
+          name,
+          getDb()
+            .collection("categories")
+            .doc(categoryId),
+          link,
+        ),
+      );
     return {
       id,
       message: "Successfully Added",
@@ -145,19 +141,16 @@ export const fetchTechnologies = async () => {
 
 const parseRow = async (row: FirebaseFirestore.DocumentData) => {
   try {
-    const category = await row.category.get();
-    row.category = category.data();
+    const category: FirebaseFirestore.DocumentSnapshot = await row.category.get();
+    row.category = category.exists ? category.data() : null;
 
-    return {
-      id: row.id,
-      name: row.name,
-      category: {
-        id: row.category.id,
-        name: row.category.name,
-      },
-      createdAt: row.createdAt.toDate(),
-      updatedAt: row.updatedAt.toDate(),
-    };
+    row.category.createdAt = row.category.createdAt.toDate();
+    row.category.updatedAt = row.category.updatedAt.toDate();
+
+    row.createdAt = row.createdAt.toDate();
+    row.updatedAt = row.updatedAt.toDate();
+
+    return new Technology(row);
   } catch (error) {
     throw error;
   }

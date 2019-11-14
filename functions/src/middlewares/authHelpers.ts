@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import { Request, Response, NextFunction } from "express";
-import { processFirebaseAuthError, AUTH_ERROR_ID_TOKEN_EXPIRED } from "../utils/firebaseAuthHelper";
-import { missingAuthError, unAuthorizedError } from "../exceptions/authErrors";
+import { processFirebaseAuthError, AUTH_ERROR_ID_TOKEN_EXPIRED } from "~utils/firebaseAuthHelper";
+import { missingAuthError, unAuthorizedError } from "~exceptions/authErrors";
 
 /**
  * Helper function to verify a firebase id token,

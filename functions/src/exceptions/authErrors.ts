@@ -1,5 +1,5 @@
-import APIError from "../utils/APIError";
-import { HTTP_FORBIDDEN, HTTP_UNAUTHORIZED_ACCESS } from "../utils/http_code";
+import APIError from "~utils/APIError";
+import { HTTP_FORBIDDEN, HTTP_UNAUTHORIZED_ACCESS } from "~utils/http_code";
 
 export const missingAuthError = new APIError(
   "Missing Authorization Credentials",

@@ -1,8 +1,10 @@
 import express, { Application } from "express";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
 import bodyParser from "body-parser";
-import router from "./routes";
-import { generateAPIError } from "~middlewares/errors";
+import { generateAPIError } from "./middlewares/errors";
+const swaggerDocument = YAML.load("../admin_api_doc.dev.yml");
 
 // Express configuration
 const app: Application = express();
@@ -12,7 +14,13 @@ app.use(cors({ origin: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use(router);
+app.use(
+  "/",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    explorer: true,
+  }),
+);
 app.use(generateAPIError);
 
 export default app;

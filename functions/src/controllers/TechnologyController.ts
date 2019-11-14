@@ -1,11 +1,11 @@
-import { setRequired } from "../utils/helpers";
-import { missingParametersError } from "../exceptions/genericErrors";
+import { setRequired } from "~utils/helpers";
+import { missingParametersError } from "~exceptions/genericErrors";
 import {
   addTechnology,
   updateTechnology,
   archiveTechnology,
   fetchTechnologies,
-} from "../repository/TechnologyRepo";
+} from "~repository/TechnologyRepo";
 
 export default class TechnologyController {
   /**

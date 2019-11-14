@@ -1,6 +1,12 @@
-import { setRequired } from "../utils/helpers";
-import { missingParametersError } from "../exceptions/genericErrors";
-import { addClient, updateClient, archiveClient, fetchClients } from "../repository/ClientRepo";
+import { setRequired } from "~utils/helpers";
+import { missingParametersError } from "~exceptions/genericErrors";
+import {
+  addClient,
+  updateClient,
+  archiveClient,
+  fetchClients,
+  fetchClient,
+} from "~repository/ClientRepo";
 
 export default class ClientController {
   /**
@@ -73,6 +79,22 @@ export default class ClientController {
     try {
       const result = await fetchClients();
       return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * fetch a single client
+   *
+   * @param {string} id - id of the client that should be fetched
+   */
+  public fetchClient = async (clientId: string) => {
+    try {
+      const res = await fetchClient(clientId);
+      return res;
     } catch (error) {
       throw error;
     }

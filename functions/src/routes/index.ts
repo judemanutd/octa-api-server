@@ -1,7 +1,7 @@
 import express, { Router, Request, Response, NextFunction } from "express";
 import adminRoutes from "./adminRoutes";
-import { authorize } from "../middlewares/authHelpers";
-import { routeNotFoundError } from "../exceptions/genericErrors";
+import { authorize } from "~middlewares/authHelpers";
+import { routeNotFoundError } from "~exceptions/genericErrors";
 
 const router: Router = express.Router();
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { HTTP_INTERNAL_SERVER_ERROR } from "../utils/http_code";
+import { HTTP_INTERNAL_SERVER_ERROR } from "~utils/http_code";
 const env = process.env.NODE_ENV || "local";
 
 const TAG = " functions/src/middlewares/errors.ts ===> ";
@@ -16,7 +16,7 @@ export const generateAPIError = (
   const errObj = {
     code: error.status || HTTP_INTERNAL_SERVER_ERROR,
     message: error.message || "Internal Server Error",
-    application_code: error.code,
+    application_code: error.code || null,
     stack: env === "development" || env === "local" ? error.stack : {},
   };
 
@@ -24,7 +24,7 @@ export const generateAPIError = (
     delete errObj.stack;
   }
 
-  return response.status(error.status).json({
+  return response.status(error.status || HTTP_INTERNAL_SERVER_ERROR).json({
     error: errObj,
   });
 };

@@ -1,7 +1,8 @@
-import uuid from "uuid/v4";
-import { getDb } from "../utils/db";
-import { parseDbError } from "../utils/dbHelper";
-import { STATUS_ACTIVE, STATUS_INACTIVE } from "../utils/constants";
+import { getDb } from "~utils/db";
+import { parseDbError } from "~utils/dbHelper";
+import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
+import { entityNotFoundError } from "~exceptions/genericErrors";
+import Client from "~models/Client";
 
 /**
  * ADMIN
@@ -13,21 +14,14 @@ import { STATUS_ACTIVE, STATUS_INACTIVE } from "../utils/constants";
  */
 export const addClient = async (name: string, address?: string) => {
   try {
-    const id = uuid();
+    const insertObj = Client.init(name, address);
 
     await getDb()
       .collection("clients")
-      .doc(id)
-      .set({
-        id,
-        name,
-        address,
-        status: STATUS_ACTIVE,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+      .doc(insertObj.id)
+      .set(insertObj);
     return {
-      id,
+      id: insertObj.id,
       message: "Successfully Added",
     };
   } catch (error) {
@@ -92,6 +86,29 @@ export const archiveClient = async (id: string) => {
 /**
  * ADMIN
  *
+ * fetch a single client
+ *
+ * @param {string} id - id of the client that should be fetched
+ */
+export const fetchClient = async (clientId: string) => {
+  try {
+    const client = await getDb()
+      .collection("clients")
+      .doc(clientId)
+      .get();
+
+    if (!client.exists || (client.exists && client.data().status !== STATUS_ACTIVE))
+      throw entityNotFoundError("Client does not exist");
+
+    return parseRow(client.data());
+  } catch (error) {
+    throw parseDbError(error);
+  }
+};
+
+/**
+ * ADMIN
+ *
  * fetch all clients
  *
  */
@@ -110,13 +127,10 @@ export const fetchClients = async () => {
 
 const parseRow = (row: FirebaseFirestore.DocumentData) => {
   try {
-    return {
-      id: row.id,
-      name: row.name,
-      address: row.address,
-      createdAt: row.createdAt.toDate(),
-      updatedAt: row.updatedAt.toDate(),
-    };
+    row.createdAt = row.createdAt.toDate();
+    row.updatedAt = row.updatedAt.toDate();
+
+    return new Client(row);
   } catch (error) {
     throw error;
   }

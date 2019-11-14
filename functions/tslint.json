@@ -25,7 +25,19 @@
     "no-shadowed-variable": true,
     "no-empty": [true, "allow-empty-catch"],
     "no-floating-promises": true,
-    "no-implicit-dependencies": true,
+    "no-implicit-dependencies": [
+      true,
+      [
+        "~controllers",
+        "~models",
+        "~repository",
+        "~schemas",
+        "~utils",
+        "~middlewares",
+        "~exceptions",
+        "~interfaces"
+      ]
+    ],
     "no-invalid-this": true,
     "no-string-throw": true,
     "no-unsafe-finally": true,
@@ -46,5 +58,8 @@
   "jsRules": {
     "semicolon": true,
     "triple-equals": true
+  },
+  "linterOptions": {
+    "exclude": ["node_modules/**/*", "dist/**/*", "test/**/*"]
   }
 }

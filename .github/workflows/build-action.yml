@@ -3,11 +3,13 @@ name: CI
 # on: [push, pull_request]
 on:
   push:
-    branches:
-      - "*" # matches every branch
+    branches-ignore:
+      - master
+      - develop
   pull_request:
     branches:
-      - "*"
+      - master
+      - develop
 
 jobs:
   build:

@@ -2,6 +2,7 @@ import uuid from "uuid/v4";
 import { getDb } from "~utils/db";
 import { parseDbError } from "~utils/dbHelper";
 import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
+import Category from "~models/Category";
 
 /**
  * ADMIN
@@ -17,13 +18,7 @@ export const addCategory = async (name: string) => {
     await getDb()
       .collection("categories")
       .doc(id)
-      .set({
-        id,
-        name,
-        status: STATUS_ACTIVE,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+      .set(Category.init(name));
     return {
       id,
       message: "Successfully Added",
@@ -105,12 +100,10 @@ export const fetchCategories = async () => {
 
 const parseRow = (row: FirebaseFirestore.DocumentData) => {
   try {
-    return {
-      id: row.id,
-      name: row.name,
-      createdAt: row.createdAt.toDate(),
-      updatedAt: row.updatedAt.toDate(),
-    };
+    row.createdAt = row.createdAt.toDate();
+    row.updatedAt = row.updatedAt.toDate();
+
+    return new Category(row);
   } catch (error) {
     throw error;
   }

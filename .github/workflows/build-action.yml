@@ -30,4 +30,4 @@ jobs:
       - name: Build
         run: |
           cd functions
-          npm build
+          npm run-script build

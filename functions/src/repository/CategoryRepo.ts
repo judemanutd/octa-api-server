@@ -1,4 +1,3 @@
-import uuid from "uuid/v4";
 import { getDb } from "~utils/db";
 import { parseDbError } from "~utils/dbHelper";
 import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
@@ -13,14 +12,14 @@ import Category from "~models/Category";
  */
 export const addCategory = async (name: string) => {
   try {
-    const id = uuid();
+    const obj = Category.init(name);
 
     await getDb()
       .collection("categories")
-      .doc(id)
-      .set(Category.init(name));
+      .doc(obj.id)
+      .set(obj);
     return {
-      id,
+      id: obj.id,
       message: "Successfully Added",
     };
   } catch (error) {

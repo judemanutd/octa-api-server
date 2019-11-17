@@ -1,4 +1,3 @@
-import uuid from "uuid/v4";
 import { getDb } from "~utils/db";
 import { parseDbError } from "~utils/dbHelper";
 import { entityNotFoundError } from "~exceptions/genericErrors";
@@ -16,7 +15,13 @@ import Technology from "~models/Technology";
  */
 export const addTechnology = async (name: string, categoryId: string, link?: string) => {
   try {
-    const id = uuid();
+    const obj = Technology.init(
+      name,
+      getDb()
+        .collection("categories")
+        .doc(categoryId),
+      link,
+    );
 
     const category = await getDb()
       .collection("categories")
@@ -27,18 +32,10 @@ export const addTechnology = async (name: string, categoryId: string, link?: str
 
     await getDb()
       .collection("technologies")
-      .doc(id)
-      .set(
-        Technology.init(
-          name,
-          getDb()
-            .collection("categories")
-            .doc(categoryId),
-          link,
-        ),
-      );
+      .doc(obj.id)
+      .set(obj);
     return {
-      id,
+      id: obj.id,
       message: "Successfully Added",
     };
   } catch (error) {

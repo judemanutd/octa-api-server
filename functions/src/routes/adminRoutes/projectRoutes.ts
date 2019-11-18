@@ -1,6 +1,7 @@
 import express, { Request, Response, Router, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
+import componentRoutes from "./componentRoutes";
 import { response, successResponse } from "~utils/helpers";
 import { receiveFiles } from "~utils/multerHelper";
 import ProjectController from "~controllers/ProjectController";
@@ -33,6 +34,9 @@ const multerOptions: any = {
 };
 
 const multipartFormDataParser = multer(multerOptions).any();
+
+// component routes
+router.use("/", componentRoutes);
 
 // add a cover image to a project
 router.post("/cover/:projectId", async (req: Request, res: Response, next: NextFunction) => {

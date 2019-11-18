@@ -173,6 +173,81 @@ components:
           type: string
           description: updated at ISO string
           example: "2019-10-13T07:47:09.376Z"
+    Component:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the component
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: component name
+          example: Mobile Component
+        cover:
+          type: object
+          properties:
+            link:
+              type: string
+              description: public link for the cover image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+            meta:
+              $ref: "#/components/schemas/CloudStorageObject"
+        logo:
+          type: object
+          properties:
+            link:
+              type: string
+              description: public link for the logo image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+            meta:
+              $ref: "#/components/schemas/CloudStorageObject"
+        gallery:
+          type: array
+          items:
+            type: object
+            properties:
+              link:
+                type: string
+                description: public link for the image
+                example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+              meta:
+                $ref: "#/components/schemas/CloudStorageObject"
+        category:
+          type: object
+          $ref: "#/components/schemas/Category"
+        project:
+          type: object
+          $ref: "#/components/schemas/Project"
+        technology:
+          type: array
+          items:
+            $ref: "#/components/schemas/Technology"
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: type of link ie, app store, blog post, article
+                example: blog
+              url:
+                type: string
+                description: url for the link
+                example: https://google.com
+              text:
+                type: string
+                description: Text to display for the link
+                example: Google
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
     ItemInsertUpdateResponse:
       type: object
       properties:
@@ -235,6 +310,34 @@ components:
             message:
               type: string
               example: Client does not exist
+    CategoryNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Category does not exist
+    ProjectNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Project does not exist
     EntityNotFound:
       type: object
       properties:
@@ -286,6 +389,18 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ClientNotFound"
+    CategoryNotFoundError:
+      description: Category Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CategoryNotFound"
+    ProjectNotFoundError:
+      description: Project Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProjectNotFound"
     EntityNotFoundError:
       description: Entity Not Found Error
       content:
@@ -322,6 +437,14 @@ components:
     projectId:
       in: path
       name: projectId
+      required: true
+      schema:
+        type: string
+        description: id of the project that is being modified
+        example: 31765c4c-2606-4e1b-a613-7866212a86b6
+    componentId:
+      in: path
+      name: componentId
       required: true
       schema:
         type: string
@@ -701,8 +824,9 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
+                anyOf:
                   - $ref: "#/components/responses/ClientNotFoundError"
+                  - $ref: "#/components/responses/ProjectNotFoundError"
               examples:
                 clientNotFound:
                   summary: Client does not exist error
@@ -728,6 +852,55 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         404:
           $ref: "#/components/responses/EntityNotFoundError"
+  /project/{projectId}/component:
+    post:
+      tags:
+        - project
+      description: Quick add a component for a given project
+      summary: Quick add a component for a project, this is the initial call that needs to be made in order to add a component in the system.
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: name of the component
+                  example: Mobile project
+                categoryId:
+                  type: string
+                  description: id of the category to which the component belongs
+                  example: e140073a-092e-48dd-8159-c0a67b617894
+                technologyId:
+                  type: array
+                  items:
+                    type: string
+                    example:
+                      [
+                        e140073a-092e-48dd-8159-c0a67b617894,
+                        e140073a-092e-48dd-8159-c0a67b617895,
+                      ]
+              required:
+                - name
+                - projectId
+                - categoryId
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: "#/components/responses/CategoryNotFoundError"
+                  - $ref: "#/components/responses/ProjectNotFoundError"
+
   /project/cover/{projectId}:
     post:
       tags:

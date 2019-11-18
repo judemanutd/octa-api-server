@@ -2,6 +2,7 @@ import { getDb } from "~utils/db";
 import { parseDbError } from "~utils/dbHelper";
 import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
 import Category from "~models/Category";
+import { entityNotFoundError } from "~exceptions/genericErrors";
 
 /**
  * ADMIN
@@ -92,6 +93,29 @@ export const fetchCategories = async () => {
       .get();
 
     return categories.docs.map(category => parseRow(category.data()));
+  } catch (error) {
+    throw parseDbError(error);
+  }
+};
+
+/**
+ * ADMIN
+ *
+ * fetch a single category
+ *
+ * @param {string} categoryId - id of the category
+ */
+export const fetchCategory = async (categoryId: string) => {
+  try {
+    const category = await getDb()
+      .collection("categories")
+      .doc(categoryId)
+      .get();
+
+    if (!category.exists || (category.exists && category.data().status !== STATUS_ACTIVE))
+      throw entityNotFoundError("Category does not exist");
+
+    return parseRow(category.data());
   } catch (error) {
     throw parseDbError(error);
   }

@@ -1,4 +1,17 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "components",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "project", "order": "ASCENDING" },
+        {
+          "fieldPath": "technology",
+          "order": "DESCENDING",
+          "arrayConfig": "CONTAINS"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

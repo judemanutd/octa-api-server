@@ -121,7 +121,7 @@ export const fetchCategory = async (categoryId: string) => {
   }
 };
 
-const parseRow = (row: FirebaseFirestore.DocumentData) => {
+export const parseRow = (row: FirebaseFirestore.DocumentData) => {
   try {
     row.createdAt = row.createdAt.toDate();
     row.updatedAt = row.updatedAt.toDate();

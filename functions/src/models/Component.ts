@@ -12,20 +12,25 @@ class Component {
     name: string,
     projectRef: FirebaseFirestore.DocumentReference,
     categoryRef: FirebaseFirestore.DocumentReference,
-    technologyRefs: string[] = [],
+    technologyRefs: FirebaseFirestore.DocumentReference[] = [],
+    links: string[] = [],
+    summary: string = null,
+    description: string = null,
   ) => {
     const id = uuid();
 
     return {
       id,
       name,
+      summary,
+      description,
       cover: null,
       logo: null,
       category: categoryRef,
       project: projectRef,
       technology: technologyRefs,
       gallery: [],
-      links: [],
+      links,
       status: STATUS_ACTIVE,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -34,6 +39,8 @@ class Component {
 
   public id: string;
   public name: string;
+  public summary: string;
+  public description: string;
   public cover: IImageUploadModel;
   public logo: IImageUploadModel;
   public category: Category;
@@ -49,6 +56,8 @@ class Component {
       const validatedPayload = this.validate(payload);
       this.id = validatedPayload.id;
       this.name = validatedPayload.name;
+      this.summary = validatedPayload.summary;
+      this.description = validatedPayload.description;
       this.cover = validatedPayload.cover;
       this.logo = validatedPayload.logo;
       this.category = new Category(validatedPayload.category);

@@ -3,11 +3,14 @@ import categorySchema from "~schemas/CategorySchema";
 import technologySchema from "~schemas/TechnologySchema";
 import cloudStorageUploadSchema from "~schemas/CloudStorageUploadSchema";
 import projectSchema from "~schemas/ProjectSchema";
+import componentLinkSchema from "~schemas/ComponentLinkSchema";
 
 const componentSchema = () =>
   object().shape({
     id: string().required(),
     name: string().required(),
+    summary: string().nullable(true),
+    description: string().nullable(true),
     category: categorySchema().required(),
     project: projectSchema().required(),
     technology: array(technologySchema()).default(() => []),
@@ -31,13 +34,7 @@ const componentSchema = () =>
         meta: cloudStorageUploadSchema().required(),
       }),
     ).default(() => []),
-    links: array(
-      object().shape({
-        type: string().required(),
-        url: string().required(),
-        text: string().required(),
-      }),
-    ).default(() => []),
+    links: array(componentLinkSchema()).default(() => []),
     createdAt: date()
       .default(() => {
         return new Date();

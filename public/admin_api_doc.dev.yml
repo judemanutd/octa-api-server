@@ -184,6 +184,14 @@ components:
           type: string
           description: component name
           example: Mobile Component
+        summary:
+          type: string
+          description: summary for the component
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+        description:
+          type: string
+          description: long description for the component
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         cover:
           type: object
           properties:
@@ -338,6 +346,20 @@ components:
             message:
               type: string
               example: Project does not exist
+    ComponentNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Component does not exist
     EntityNotFound:
       type: object
       properties:
@@ -401,6 +423,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ProjectNotFound"
+    ComponentNotFoundError:
+      description: Component Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ComponentNotFound"
     EntityNotFoundError:
       description: Entity Not Found Error
       content:
@@ -727,8 +755,8 @@ paths:
     post:
       tags:
         - project
-      description: Quick add a project
-      summary: Quick add a project, this is the initial call that needs to be made in order to create a project in the system.
+      summary: Quick add a project
+      description: Quick add a project, this is the initial call that needs to be made in order to create a project in the system.
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -855,9 +883,9 @@ paths:
   /project/{projectId}/component:
     post:
       tags:
-        - project
-      description: Quick add a component for a given project
-      summary: Quick add a component for a project, this is the initial call that needs to be made in order to add a component in the system.
+        - component
+      summary: Quick add a component for a given project
+      description: Quick add a component for a project, this is the initial call that needs to be made in order to add a component in the system.
       parameters:
         - $ref: "#/components/parameters/projectId"
       requestBody:
@@ -870,6 +898,14 @@ paths:
                   type: string
                   description: name of the component
                   example: Mobile project
+                summary:
+                  type: string
+                  description: summary for the component
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                description:
+                  type: string
+                  description: long description for the component
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 categoryId:
                   type: string
                   description: id of the category to which the component belongs
@@ -883,6 +919,23 @@ paths:
                         e140073a-092e-48dd-8159-c0a67b617894,
                         e140073a-092e-48dd-8159-c0a67b617895,
                       ]
+                links:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: type of link ie, app store, blog post, article
+                        example: blog
+                      url:
+                        type: string
+                        description: url for the link
+                        example: https://google.com
+                      text:
+                        type: string
+                        description: Text to display for the link
+                        example: Google
               required:
                 - name
                 - projectId
@@ -900,13 +953,128 @@ paths:
                 anyOf:
                   - $ref: "#/components/responses/CategoryNotFoundError"
                   - $ref: "#/components/responses/ProjectNotFoundError"
-
+    get:
+      tags:
+        - component
+      summary: Fetch all components for a project
+      description: Fetch all the components that belong to a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Component"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /project/{projectId}/component/{componentId}:
+    put:
+      tags:
+        - component
+      summary: Update contents for a component
+      description: Update component attributes excluding cover, logo and gallery. This update will overwrite existing values
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: name of the component
+                  example: Mobile project
+                summary:
+                  type: string
+                  description: summary for the component
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                description:
+                  type: string
+                  description: long description for the component
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                categoryId:
+                  type: string
+                  description: id of the category to which the component belongs
+                  example: e140073a-092e-48dd-8159-c0a67b617894
+                technologyId:
+                  type: array
+                  items:
+                    type: string
+                    example:
+                      [
+                        e140073a-092e-48dd-8159-c0a67b617894,
+                        e140073a-092e-48dd-8159-c0a67b617895,
+                      ]
+                links:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: type of link ie, app store, blog post, article
+                        example: blog
+                      url:
+                        type: string
+                        description: url for the link
+                        example: https://google.com
+                      text:
+                        type: string
+                        description: Text to display for the link
+                        example: Google
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: "#/components/responses/CategoryNotFoundError"
+                  - $ref: "#/components/responses/ProjectNotFoundError"
+                  - $ref: "#/components/responses/ComponentNotFoundError"
+    get:
+      tags:
+        - component
+      summary: Fetch a single component for a project
+      description: Fetch a single component that belongs to a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: object
+                    $ref: "#/components/schemas/Component"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          description: Entity not found
+          $ref: "#/components/responses/ComponentNotFoundError"
   /project/cover/{projectId}:
     post:
       tags:
         - project
-      description: Add a cover image to an existing project
-      summary: Add a cover image to an existing project, this will overwrite any existing cover image
+      summary: Add a cover image to an existing project
+      description: Add a cover image to an existing project, this will overwrite any existing cover image
       parameters:
         - $ref: "#/components/parameters/projectId"
       requestBody:
@@ -945,8 +1113,8 @@ paths:
     post:
       tags:
         - project
-      description: Add a logo image to an existing project
-      summary: Add a logo image to an existing project, this will overwrite any existing logo image
+      summary: Add a logo image to an existing project
+      description: Add a logo image to an existing project, this will overwrite any existing logo image
       parameters:
         - $ref: "#/components/parameters/projectId"
       requestBody:

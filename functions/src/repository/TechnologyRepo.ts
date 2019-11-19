@@ -136,7 +136,7 @@ export const fetchTechnologies = async () => {
   }
 };
 
-const parseRow = async (row: FirebaseFirestore.DocumentData) => {
+export const parseRow = async (row: FirebaseFirestore.DocumentData) => {
   try {
     const category: FirebaseFirestore.DocumentSnapshot = await row.category.get();
     row.category = category.exists ? category.data() : null;

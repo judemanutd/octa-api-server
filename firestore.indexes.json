@@ -3,17 +3,9 @@
     {
       "collectionGroup": "components",
       "queryScope": "COLLECTION",
-      "fields": [{ "fieldPath": "project", "order": "ASCENDING" }]
-    },
-    {
-      "collectionGroup": "components",
-      "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "technology",
-          "order": "ASCENDING",
-          "arrayConfig": "CONTAINS"
-        }
+        { "fieldPath": "project", "order": "DESCENDING" },
+        { "fieldPath": "status", "order": "DESCENDING" }
       ]
     }
   ],

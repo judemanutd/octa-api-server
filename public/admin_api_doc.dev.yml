@@ -117,6 +117,27 @@ components:
         generation:
           type: string
           example: 1572794432393307
+    GalleryItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the gallery item
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: optional name given to the gallery item
+          example: Mobile
+        description:
+          type: string
+          description: optional description for the gallery item
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+        link:
+          type: string
+          description: public link for the cover image
+          example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+        meta:
+          $ref: "#/components/schemas/CloudStorageObject"
     Project:
       type: object
       properties:
@@ -146,6 +167,10 @@ components:
               example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
             meta:
               $ref: "#/components/schemas/CloudStorageObject"
+        gallery:
+          type: array
+          items:
+            $ref: "#/components/schemas/GalleryItem"
         client:
           type: object
           $ref: "#/components/schemas/Client"
@@ -210,17 +235,6 @@ components:
               example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
             meta:
               $ref: "#/components/schemas/CloudStorageObject"
-        gallery:
-          type: array
-          items:
-            type: object
-            properties:
-              link:
-                type: string
-                description: public link for the image
-                example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
-              meta:
-                $ref: "#/components/schemas/CloudStorageObject"
         category:
           type: object
           $ref: "#/components/schemas/Category"
@@ -469,6 +483,14 @@ components:
       schema:
         type: string
         description: id of the project that is being modified
+        example: 31765c4c-2606-4e1b-a613-7866212a86b6
+    galleryId:
+      in: path
+      name: galleryId
+      required: true
+      schema:
+        type: string
+        description: id of the gallery item that is being modified
         example: 31765c4c-2606-4e1b-a613-7866212a86b6
     componentId:
       in: path
@@ -960,6 +982,54 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         404:
           $ref: "#/components/responses/EntityNotFoundError"
+  /project/{projectId}/gallery:
+    post:
+      tags:
+        - project
+      summary: Add an image to the projects gallery
+      description: Add an image to the projects gallery along with an optional name and description
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                gallery:
+                  format: binary
+                  description: image file for the gallery
+                name:
+                  format: string
+                  description: name that will be displayed for the image
+                description:
+                  format: string
+                  description: description for the image if any
+              required:
+                - gallery
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/ProjectNotFoundError"
+  /project/{projectId}/gallery/{galleryId}:
+    delete:
+      tags:
+        - project
+      summary: Remove a gallery item from the gallery
+      description: Remove a gallery item from the gallery
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/galleryId"
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/ProjectNotFoundError"
   /project/{projectId}/component:
     post:
       tags:

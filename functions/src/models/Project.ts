@@ -1,8 +1,11 @@
 import uuid from "uuid/v4";
+import admin = require("firebase-admin");
 import Client from "./Client";
 import projectSchema from "~schemas/ProjectSchema";
 import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResponse";
+import { IGalleryItem } from "~interfaces/IGalleryItem";
 import { STATUS_ACTIVE } from "~utils/constants";
+import { generatePublicLink } from "~utils/fileHelper";
 
 class Project {
   public static init = (name: string, clientRef: FirebaseFirestore.DocumentReference) => {
@@ -13,6 +16,7 @@ class Project {
       name,
       cover: null,
       logo: null,
+      gallery: [],
       startDate: null,
       endDate: null,
       cost: 0,
@@ -22,6 +26,22 @@ class Project {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+  };
+
+  public static initGalleryItem = (
+    file: ICloudStorageUploadResponse,
+    name?: string,
+    description?: string,
+  ) => {
+    const id = uuid();
+
+    return admin.firestore.FieldValue.arrayUnion({
+      id,
+      name: name || null,
+      description: description || null,
+      link: generatePublicLink(file),
+      meta: file,
+    });
   };
 
   public id: string;
@@ -35,6 +55,7 @@ class Project {
     link: string;
     meta: ICloudStorageUploadResponse;
   };
+  public gallery: IGalleryItem[];
   public startDate: Date;
   public endDate: Date;
   public cost: number;
@@ -49,6 +70,7 @@ class Project {
       this.name = validatedPayload.name;
       this.cover = validatedPayload.cover;
       this.logo = validatedPayload.logo;
+      this.gallery = validatedPayload.gallery;
       this.client = new Client(validatedPayload.client);
       this.startDate = validatedPayload.startDate;
       this.endDate = validatedPayload.endDate;

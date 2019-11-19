@@ -38,6 +38,40 @@ const multipartFormDataParser = multer(multerOptions).any();
 // component routes
 router.use("/", componentRoutes);
 
+// add an image to the project gallery
+router.post("/:projectId/gallery", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const uploads = await receiveFiles(multipartFormDataParser, req, res);
+
+    const projectId = req.params.projectId;
+    const name = req.body.name;
+    const description = req.body.description;
+
+    const result = await projectController.addGalleryImage(projectId, uploads, name, description);
+
+    return response(res, successResponse(result));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// delete an image from the gallery
+router.delete(
+  "/:projectId/gallery/:galleryImageId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const projectId = req.params.projectId;
+      const galleryImageId = req.params.galleryImageId;
+
+      const result = await projectController.deleteGalleryImage(projectId, galleryImageId);
+
+      return response(res, successResponse(result));
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 // add a cover image to a project
 router.post("/:projectId/cover", async (req: Request, res: Response, next: NextFunction) => {
   try {

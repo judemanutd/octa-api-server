@@ -1,6 +1,10 @@
 import moment from "moment";
 import { setRequired } from "~utils/helpers";
-import { missingParametersError, invalidDateError } from "~exceptions/genericErrors";
+import {
+  missingParametersError,
+  invalidDateError,
+  entityNotFoundError,
+} from "~exceptions/genericErrors";
 import { uploadFile, deleteFile } from "~utils/fileHelper";
 import {
   addProject,
@@ -10,6 +14,8 @@ import {
   updatedLogoImage,
   archiveProject,
   updateProject,
+  addGalleryImage,
+  deleteGalleryImage,
 } from "~repository/ProjectRepo";
 import ClientController from "~controllers/ClientController";
 import { IMulterFileUpload } from "~interfaces/IMulterFileUpload";
@@ -259,6 +265,84 @@ export default class ProjectController {
       if (project && project.logo) {
         await deleteFile(project.logo.meta);
       }
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * add an image to the project gallery
+   *
+   * @param {string} projectId - id of the project for which the cover image is being added
+   * @param {IMulterFileUpload} files - files array returned by multer
+   * @param {string} name - name for the upload
+   * @param {string} description - description for the upload
+   */
+  public addGalleryImage = async (
+    projectId: string,
+    files: IMulterFileUpload[],
+    name?: string,
+    description?: string,
+  ) => {
+    try {
+      const isValid = setRequired(projectId);
+      if (!isValid) throw missingParametersError();
+
+      let galleryImage: IMulterFileUpload;
+      // check if the necesarry files have been uploaded
+      files.forEach(file => {
+        if (file.fieldname === "gallery") galleryImage = file;
+      });
+
+      if (!galleryImage) throw missingParametersError("Missing gallery image");
+
+      // check if project exists before performing any operations
+      const project = await fetchProject(projectId);
+
+      const galleryImageObject = await uploadFile(galleryImage);
+
+      const response = await addGalleryImage(project.id, galleryImageObject, name, description);
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * delete an image from the project gallery
+   *
+   * @param {string} projectId - id of the project for which the cover image is being added
+   * @param {string} galleryImageId - id of the image in the project that needs to be deleted
+   */
+  public deleteGalleryImage = async (projectId: string, galleryImageId: string) => {
+    try {
+      const isValid = setRequired(projectId, galleryImageId);
+      if (!isValid) throw missingParametersError();
+
+      // check if project exists before performing any operations
+      const project = await fetchProject(projectId);
+
+      const galleryItemArr = project.gallery.filter(
+        galleryItem => galleryItem.id === galleryImageId,
+      );
+
+      if (galleryItemArr.length <= 0) {
+        // unable to find item
+        throw entityNotFoundError("Unable to find gallery item");
+      }
+
+      const galleryItemToDelete = galleryItemArr[0];
+
+      const response = await deleteGalleryImage(projectId, galleryItemToDelete);
+
+      await deleteFile(galleryItemToDelete.meta);
 
       return response;
     } catch (error) {

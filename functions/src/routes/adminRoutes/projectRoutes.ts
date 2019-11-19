@@ -39,7 +39,7 @@ const multipartFormDataParser = multer(multerOptions).any();
 router.use("/", componentRoutes);
 
 // add a cover image to a project
-router.post("/cover/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+router.post("/:projectId/cover", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const uploads = await receiveFiles(multipartFormDataParser, req, res);
 
@@ -54,7 +54,7 @@ router.post("/cover/:projectId", async (req: Request, res: Response, next: NextF
 });
 
 // delete cover image for a project
-router.delete("/cover/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+router.delete("/:projectId/cover", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const projectId = req.params.projectId;
 
@@ -67,7 +67,7 @@ router.delete("/cover/:projectId", async (req: Request, res: Response, next: Nex
 });
 
 // add a logo image to a project
-router.post("/logo/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+router.post("/:projectId/logo", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const uploads = await receiveFiles(multipartFormDataParser, req, res);
 
@@ -82,36 +82,11 @@ router.post("/logo/:projectId", async (req: Request, res: Response, next: NextFu
 });
 
 // delete logo image for a project
-router.delete("/logo/:projectId", async (req: Request, res: Response, next: NextFunction) => {
+router.delete("/:projectId/logo", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const projectId = req.params.projectId;
 
     const result = await projectController.deleteLogoImage(projectId);
-
-    return response(res, successResponse(result));
-  } catch (error) {
-    next(error);
-  }
-});
-
-// quick add a project, called when creating a new basic project
-router.post("/", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const name = req.body.name;
-    const clientId = req.body.clientId;
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
-    const cost = req.body.cost;
-    const currency = req.body.currency;
-
-    const result = await projectController.addProject(
-      name,
-      clientId,
-      startDate,
-      endDate,
-      cost,
-      currency,
-    );
 
     return response(res, successResponse(result));
   } catch (error) {
@@ -166,6 +141,31 @@ router.delete("/:projectId", async (req: Request, res: Response, next: NextFunct
     const projectId = req.params.projectId;
 
     const result = await projectController.archiveProject(projectId);
+
+    return response(res, successResponse(result));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// quick add a project, called when creating a new basic project
+router.post("/", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const name = req.body.name;
+    const clientId = req.body.clientId;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const cost = req.body.cost;
+    const currency = req.body.currency;
+
+    const result = await projectController.addProject(
+      name,
+      clientId,
+      startDate,
+      endDate,
+      cost,
+      currency,
+    );
 
     return response(res, successResponse(result));
   } catch (error) {

@@ -9,7 +9,10 @@ import {
   updateComponent,
   fetchComponent,
   fetchComponents,
+  updatedCoverImage,
 } from "~repository/ComponentRepo";
+import { IMulterFileUpload } from "~interfaces/IMulterFileUpload";
+import { uploadFile, deleteFile } from "~utils/fileHelper";
 
 const projectController: ProjectController = new ProjectController();
 const categoryController: CategoryController = new CategoryController();
@@ -207,6 +210,82 @@ export default class ComponentController {
       const component = await fetchComponent(componentId);
 
       return component;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * adds a cover image to a component
+   *
+   * @param {string} projectId - id of the project
+   * @param {string} componentId - id of the component for which the cover image is being added
+   * @param {IMulterFileUpload[]} files - files array returned by multer
+   */
+  public addCoverImage = async (
+    projectId: string,
+    componentId: string,
+    files: IMulterFileUpload[],
+  ) => {
+    try {
+      const isValid = setRequired(projectId, componentId);
+      if (!isValid) throw missingParametersError();
+
+      let coverImage: IMulterFileUpload;
+      // check if the necesarry files have been uploaded
+      files.forEach(file => {
+        if (file.fieldname === "cover") coverImage = file;
+      });
+
+      if (!coverImage) throw missingParametersError("Missing cover image");
+
+      const component = await fetchComponent(componentId);
+
+      // upload the cover image
+      const coverImageObject = await uploadFile(coverImage);
+
+      const response = await updatedCoverImage(
+        component.project.id,
+        component.id,
+        coverImageObject,
+      );
+
+      // delete the previous coverImage if any
+      if (component && component.cover) {
+        await deleteFile(component.cover.meta);
+      }
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * delete cover image for a component
+   *
+   * @param {string} projectId - id of the project
+   * @param {string} componentId - id of the component for which the cover image is being added
+   */
+  public deleteCoverImage = async (projectId: string, componentId: string) => {
+    try {
+      const isValid = setRequired(projectId, componentId);
+      if (!isValid) throw missingParametersError();
+
+      const component = await fetchComponent(componentId);
+
+      const response = await updatedCoverImage(component.project.id, component.id);
+
+      // delete the previous coverImage if any
+      if (component && component.cover) {
+        await deleteFile(component.cover.meta);
+      }
+
+      return response;
     } catch (error) {
       throw error;
     }

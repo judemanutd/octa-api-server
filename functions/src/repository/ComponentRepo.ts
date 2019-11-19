@@ -8,6 +8,8 @@ import { parseRow as parseCategoryRow } from "./CategoryRepo";
 import { HTTP_BAD_REQUEST } from "~utils/http_code";
 import { STATUS_ACTIVE } from "~utils/constants";
 import { entityNotFoundError } from "~exceptions/genericErrors";
+import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResponse";
+import { generatePublicLink } from "~utils/fileHelper";
 
 /**
  * ADMIN
@@ -200,6 +202,59 @@ export const fetchComponent = async (componentId: string) => {
     return parseRow(component.data());
   } catch (error) {
     throw error;
+  }
+};
+
+/**
+ * ADMIN
+ *
+ * adds a cover image to a component
+ *
+ * @param {string} projectId - id of the project
+ * @param {string} componentId - id of the component for which the cover image is being added
+ * @param {IMulterFileUpload[]} files - files array returned by multer
+ */
+export const updatedCoverImage = async (
+  projectId: string,
+  componentId: string,
+  file?: ICloudStorageUploadResponse,
+) => {
+  try {
+    if (file) {
+      // add cover image
+      const publicLink = generatePublicLink(file);
+
+      await getDb()
+        .collection("components")
+        .doc(componentId)
+        .update({
+          cover: {
+            link: generatePublicLink(file),
+            meta: file,
+          },
+          updatedAt: new Date(),
+        });
+
+      return {
+        link: publicLink,
+        message: "Successfully uploaded",
+      };
+    } else {
+      // delete cover image
+      await getDb()
+        .collection("components")
+        .doc(projectId)
+        .update({
+          cover: null,
+          updatedAt: new Date(),
+        });
+
+      return {
+        message: "Successfully deleted",
+      };
+    }
+  } catch (error) {
+    throw parseDbError(error);
   }
 };
 

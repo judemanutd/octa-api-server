@@ -880,6 +880,86 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         404:
           $ref: "#/components/responses/EntityNotFoundError"
+  /project/{projectId}/logo:
+    post:
+      tags:
+        - project
+      summary: Add a logo image to an existing project
+      description: Add a logo image to an existing project, this will overwrite any existing logo image
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                logo:
+                  format: binary
+                  description: image file for the logo
+              required:
+                - cover
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
+    delete:
+      tags:
+        - project
+      description: Delete a logo image for a project
+      summary: Delete a logo image for a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          $ref: "#/components/responses/FileDeleteSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
+  /project/{projectId}/cover:
+    post:
+      tags:
+        - project
+      summary: Add a cover image to an existing project
+      description: Add a cover image to an existing project, this will overwrite any existing cover image
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cover:
+                  format: binary
+                  description: image file for the cover
+              required:
+                - cover
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
+    delete:
+      tags:
+        - project
+      description: Delete a cover image for a project
+      summary: Delete a cover image for a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          $ref: "#/components/responses/FileDeleteSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
   /project/{projectId}/component:
     post:
       tags:
@@ -1069,14 +1149,15 @@ paths:
         404:
           description: Entity not found
           $ref: "#/components/responses/ComponentNotFoundError"
-  /project/cover/{projectId}:
+  /project/{projectId}/component/{componentId}/cover:
     post:
       tags:
-        - project
-      summary: Add a cover image to an existing project
-      description: Add a cover image to an existing project, this will overwrite any existing cover image
+        - component
+      summary: Add a cover image to an existing component
+      description: Add a cover image to an existing component, this will overwrite any existing cover image
       parameters:
         - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
       requestBody:
         content:
           multipart/form-data:
@@ -1094,58 +1175,19 @@ paths:
         401:
           $ref: "#/components/responses/UnauthorizedError"
         404:
-          $ref: "#/components/responses/EntityNotFoundError"
+          $ref: "#/components/responses/ComponentNotFoundError"
     delete:
       tags:
-        - project
-      description: Delete a cover image for a project
-      summary: Delete a cover image for a project
+        - component
+      description: Delete a cover image for a component
+      summary: Delete a cover image for a component
       parameters:
         - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
       responses:
         200:
           $ref: "#/components/responses/FileDeleteSuccess"
         401:
           $ref: "#/components/responses/UnauthorizedError"
         404:
-          $ref: "#/components/responses/EntityNotFoundError"
-  /project/logo/{projectId}:
-    post:
-      tags:
-        - project
-      summary: Add a logo image to an existing project
-      description: Add a logo image to an existing project, this will overwrite any existing logo image
-      parameters:
-        - $ref: "#/components/parameters/projectId"
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                logo:
-                  format: binary
-                  description: image file for the logo
-              required:
-                - cover
-      responses:
-        200:
-          $ref: "#/components/responses/FileUploadSuccess"
-        401:
-          $ref: "#/components/responses/UnauthorizedError"
-        404:
-          $ref: "#/components/responses/EntityNotFoundError"
-    delete:
-      tags:
-        - project
-      description: Delete a logo image for a project
-      summary: Delete a logo image for a project
-      parameters:
-        - $ref: "#/components/parameters/projectId"
-      responses:
-        200:
-          $ref: "#/components/responses/FileDeleteSuccess"
-        401:
-          $ref: "#/components/responses/UnauthorizedError"
-        404:
-          $ref: "#/components/responses/EntityNotFoundError"
+          $ref: "#/components/responses/ComponentNotFoundError"

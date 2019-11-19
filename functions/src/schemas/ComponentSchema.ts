@@ -4,6 +4,7 @@ import technologySchema from "~schemas/TechnologySchema";
 import cloudStorageUploadSchema from "~schemas/CloudStorageUploadSchema";
 import projectSchema from "~schemas/ProjectSchema";
 import componentLinkSchema from "~schemas/ComponentLinkSchema";
+import gallerySchema from "./GallerySchema";
 
 const componentSchema = () =>
   object().shape({
@@ -28,12 +29,7 @@ const componentSchema = () =>
       })
       .default(() => null)
       .nullable(),
-    gallery: array(
-      object().shape({
-        link: string().required(),
-        meta: cloudStorageUploadSchema().required(),
-      }),
-    ).default(() => []),
+    gallery: array(gallerySchema()).default(() => []),
     links: array(componentLinkSchema()).default(() => []),
     createdAt: date()
       .default(() => {

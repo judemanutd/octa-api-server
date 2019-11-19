@@ -1,15 +1,17 @@
+import admin = require("firebase-admin");
+import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResponse";
+import { IGalleryItem } from "~interfaces/IGalleryItem";
 import { parseDbError } from "~utils/dbHelper";
 import Component from "~models/Component";
 import { getDb } from "~utils/db";
 import APIError from "~utils/APIError";
-import { parseRow as parseProjectRow } from "./ProjectRepo";
-import { parseRow as parseTechnologyRow } from "./TechnologyRepo";
-import { parseRow as parseCategoryRow } from "./CategoryRepo";
+import { generatePublicLink } from "~utils/fileHelper";
 import { HTTP_BAD_REQUEST } from "~utils/http_code";
 import { STATUS_ACTIVE } from "~utils/constants";
 import { entityNotFoundError } from "~exceptions/genericErrors";
-import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResponse";
-import { generatePublicLink } from "~utils/fileHelper";
+import { parseRow as parseProjectRow } from "./ProjectRepo";
+import { parseRow as parseTechnologyRow } from "./TechnologyRepo";
+import { parseRow as parseCategoryRow } from "./CategoryRepo";
 
 /**
  * ADMIN
@@ -253,6 +255,75 @@ export const updatedCoverImage = async (
         message: "Successfully deleted",
       };
     }
+  } catch (error) {
+    throw parseDbError(error);
+  }
+};
+
+/**
+ * ADMIN
+ *
+ * adds an image to the component gallery
+ *
+ * @param {string} componentId - id of the component
+ * @param {string} projectId - id of the project
+ * @param {ICloudStorageUploadResponse[]} file - file that was uploaded to cloud storage and need to be added to the project gallery
+ * @param {string} name - name for the upload
+ * @param {string} description - description for the upload
+ */
+export const addGalleryImage = async (
+  componentId: string,
+  projectId: string,
+  file: ICloudStorageUploadResponse,
+  name?: string,
+  description?: string,
+) => {
+  try {
+    const publicLink = generatePublicLink(file);
+
+    await getDb()
+      .collection("components")
+      .doc(componentId)
+      .update({
+        gallery: Component.initGalleryItem(file, name, description),
+        updatedAt: new Date(),
+      });
+
+    return {
+      link: publicLink,
+      message: "Successfully uploaded",
+    };
+  } catch (error) {
+    throw parseDbError(error);
+  }
+};
+
+/**
+ * ADMIN
+ *
+ * deletes an image from the component gallery
+ *
+ * @param {string} componentId - id of the component
+ * @param {string} projectId - id of the project
+ * @param {string} galleryItemId - gallery item that needs to be deleted
+ */
+export const deleteGalleryImage = async (
+  componentId: string,
+  projectId: string,
+  galleryItem: IGalleryItem,
+) => {
+  try {
+    await getDb()
+      .collection("components")
+      .doc(componentId)
+      .update({
+        gallery: admin.firestore.FieldValue.arrayRemove(galleryItem),
+        updatedAt: new Date(),
+      });
+
+    return {
+      message: "Successfully deleted",
+    };
   } catch (error) {
     throw parseDbError(error);
   }

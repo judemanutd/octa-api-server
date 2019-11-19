@@ -6,6 +6,7 @@ import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResp
 import { IGalleryItem } from "~interfaces/IGalleryItem";
 import { STATUS_ACTIVE } from "~utils/constants";
 import { generatePublicLink } from "~utils/fileHelper";
+import { IImageUploadModel } from "~interfaces/IImageUploadModel";
 
 class Project {
   public static init = (name: string, clientRef: FirebaseFirestore.DocumentReference) => {
@@ -47,14 +48,8 @@ class Project {
   public id: string;
   public name: string;
   public client: Client;
-  public cover: {
-    link: string;
-    meta: ICloudStorageUploadResponse;
-  };
-  public logo: {
-    link: string;
-    meta: ICloudStorageUploadResponse;
-  };
+  public cover: IImageUploadModel;
+  public logo: IImageUploadModel;
   public gallery: IGalleryItem[];
   public startDate: Date;
   public endDate: Date;

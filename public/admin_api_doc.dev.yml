@@ -1261,3 +1261,53 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         404:
           $ref: "#/components/responses/ComponentNotFoundError"
+  /project/{projectId}/component/{componentId}/gallery:
+    post:
+      tags:
+        - component
+      summary: Add an image to the components gallery
+      description: Add an image to the components gallery along with an optional name and description
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                gallery:
+                  format: binary
+                  description: image file for the gallery
+                name:
+                  format: string
+                  description: name that will be displayed for the image
+                description:
+                  format: string
+                  description: description for the image if any
+              required:
+                - gallery
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/ComponentNotFoundError"
+  /project/{projectId}/component/{componentId}/gallery/{galleryId}:
+    delete:
+      tags:
+        - component
+      summary: Remove a gallery item from the components gallery
+      description: Remove a gallery item from the components gallery
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
+        - $ref: "#/components/parameters/galleryId"
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/ComponentNotFoundError"

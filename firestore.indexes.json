@@ -3,11 +3,15 @@
     {
       "collectionGroup": "components",
       "queryScope": "COLLECTION",
+      "fields": [{ "fieldPath": "project", "order": "ASCENDING" }]
+    },
+    {
+      "collectionGroup": "components",
+      "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "project", "order": "ASCENDING" },
         {
           "fieldPath": "technology",
-          "order": "DESCENDING",
+          "order": "ASCENDING",
           "arrayConfig": "CONTAINS"
         }
       ]

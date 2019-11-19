@@ -1,6 +1,7 @@
-import { string, object, number, date } from "yup";
+import { string, object, number, date, array } from "yup";
 import clientSchema from "~schemas/ClientSchema";
 import cloudStorageUploadSchema from "~schemas/CloudStorageUploadSchema";
+import gallerySchema from "./GallerySchema";
 
 const projectSchema = () =>
   object().shape({
@@ -21,6 +22,7 @@ const projectSchema = () =>
       })
       .default(() => null)
       .nullable(),
+    gallery: array(gallerySchema()).default(() => []),
     startDate: date()
       .default(() => {
         return null;

@@ -1,10 +1,12 @@
+import admin = require("firebase-admin");
 import { getDb } from "~utils/db";
 import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResponse";
+import { IGalleryItem } from "~interfaces/IGalleryItem";
+import Project from "~models/Project";
 import { parseDbError } from "~utils/dbHelper";
 import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
 import { entityNotFoundError } from "~exceptions/genericErrors";
 import { generatePublicLink } from "~utils/fileHelper";
-import Project from "~models/Project";
 
 /**
  * ADMIN
@@ -156,6 +158,68 @@ export const updatedCoverImage = async (projectId: string, file?: ICloudStorageU
         message: "Successfully deleted",
       };
     }
+  } catch (error) {
+    throw parseDbError(error);
+  }
+};
+
+/**
+ * ADMIN
+ *
+ * adds an image to the project gallery
+ *
+ * @param {string} projectId - id of the project
+ * @param {ICloudStorageUploadResponse[]} file - file that was uploaded to cloud storage and need to be added to the project gallery
+ * @param {string} name - name for the upload
+ * @param {string} description - description for the upload
+ */
+export const addGalleryImage = async (
+  projectId: string,
+  file: ICloudStorageUploadResponse,
+  name?: string,
+  description?: string,
+) => {
+  try {
+    const publicLink = generatePublicLink(file);
+
+    await getDb()
+      .collection("projects")
+      .doc(projectId)
+      .update({
+        gallery: Project.initGalleryItem(file, name, description),
+        updatedAt: new Date(),
+      });
+
+    return {
+      link: publicLink,
+      message: "Successfully uploaded",
+    };
+  } catch (error) {
+    throw parseDbError(error);
+  }
+};
+
+/**
+ * ADMIN
+ *
+ * deletes an image from the project gallery
+ *
+ * @param {string} projectId - id of the project
+ * @param {string} galleryItemId - gallery item that needs to be deleted
+ */
+export const deleteGalleryImage = async (projectId: string, galleryItem: IGalleryItem) => {
+  try {
+    await getDb()
+      .collection("projects")
+      .doc(projectId)
+      .update({
+        gallery: admin.firestore.FieldValue.arrayRemove(galleryItem),
+        updatedAt: new Date(),
+      });
+
+    return {
+      message: "Successfully deleted",
+    };
   } catch (error) {
     throw parseDbError(error);
   }

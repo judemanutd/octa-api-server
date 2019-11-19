@@ -1,7 +1,7 @@
 import { string, array } from "yup";
 import componentLinkSchema from "~schemas/ComponentLinkSchema";
 import { setRequired } from "~utils/helpers";
-import { missingParametersError } from "~exceptions/genericErrors";
+import { missingParametersError, entityNotFoundError } from "~exceptions/genericErrors";
 import ProjectController from "~controllers/ProjectController";
 import CategoryController from "~controllers/CategoryController";
 import {
@@ -10,6 +10,8 @@ import {
   fetchComponent,
   fetchComponents,
   updatedCoverImage,
+  addGalleryImage,
+  deleteGalleryImage,
 } from "~repository/ComponentRepo";
 import { IMulterFileUpload } from "~interfaces/IMulterFileUpload";
 import { uploadFile, deleteFile } from "~utils/fileHelper";
@@ -284,6 +286,95 @@ export default class ComponentController {
       if (component && component.cover) {
         await deleteFile(component.cover.meta);
       }
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * add an image to the component gallery
+   *
+   * @param {string} componentId - id of the component for which the gallery image is being added
+   * @param {string} projectId - id of the project
+   * @param {IMulterFileUpload} files - files array returned by multer
+   * @param {string} name - name for the upload
+   * @param {string} description - description for the upload
+   */
+  public addGalleryImage = async (
+    componentId: string,
+    projectId: string,
+    files: IMulterFileUpload[],
+    name?: string,
+    description?: string,
+  ) => {
+    try {
+      const isValid = setRequired(componentId, projectId);
+      if (!isValid) throw missingParametersError();
+
+      let galleryImage: IMulterFileUpload;
+      // check if the necesarry files have been uploaded
+      files.forEach(file => {
+        if (file.fieldname === "gallery") galleryImage = file;
+      });
+
+      if (!galleryImage) throw missingParametersError("Missing gallery image");
+
+      const component = await fetchComponent(componentId);
+
+      const galleryImageObject = await uploadFile(galleryImage);
+
+      const response = await addGalleryImage(
+        component.id,
+        component.project.id,
+        galleryImageObject,
+        name,
+        description,
+      );
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * delete an image from the component gallery
+   *
+   * @param {string} componentId - id of the component for which the gallery image is being added
+   * @param {string} projectId - id of the project
+   * @param {string} galleryImageId - id of the image in the project that needs to be deleted
+   */
+  public deleteGalleryImage = async (
+    componentId: string,
+    projectId: string,
+    galleryImageId: string,
+  ) => {
+    try {
+      const isValid = setRequired(componentId, projectId, galleryImageId);
+      if (!isValid) throw missingParametersError();
+
+      const component = await fetchComponent(componentId);
+
+      const galleryItemArr = component.gallery.filter(
+        galleryItem => galleryItem.id === galleryImageId,
+      );
+
+      if (galleryItemArr.length <= 0) {
+        // unable to find item
+        throw entityNotFoundError("Unable to find gallery item");
+      }
+
+      const galleryItemToDelete = galleryItemArr[0];
+
+      const response = await deleteGalleryImage(componentId, projectId, galleryItemToDelete);
+
+      await deleteFile(galleryItemToDelete.meta);
 
       return response;
     } catch (error) {

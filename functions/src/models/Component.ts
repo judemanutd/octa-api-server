@@ -1,11 +1,15 @@
 import uuid from "uuid/v4";
+import admin from "firebase-admin";
 import Category from "./Category";
 import Project from "./Project";
 import Technology from "./Technology";
 import componentSchema from "~schemas/ComponentSchema";
 import { IImageUploadModel } from "~interfaces/IImageUploadModel";
 import { IComponentLink } from "~interfaces/IComponentLink";
+import { IGalleryItem } from "~interfaces/IGalleryItem";
 import { STATUS_ACTIVE } from "~utils/constants";
+import { ICloudStorageUploadResponse } from "~interfaces/ICloudStorageUploadResponse";
+import { generatePublicLink } from "~utils/fileHelper";
 
 class Component {
   public static init = (
@@ -26,15 +30,31 @@ class Component {
       description,
       cover: null,
       logo: null,
+      gallery: [],
       category: categoryRef,
       project: projectRef,
       technology: technologyRefs,
-      gallery: [],
       links,
       status: STATUS_ACTIVE,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+  };
+
+  public static initGalleryItem = (
+    file: ICloudStorageUploadResponse,
+    name?: string,
+    description?: string,
+  ) => {
+    const id = uuid();
+
+    return admin.firestore.FieldValue.arrayUnion({
+      id,
+      name: name || null,
+      description: description || null,
+      link: generatePublicLink(file),
+      meta: file,
+    });
   };
 
   public id: string;
@@ -46,7 +66,7 @@ class Component {
   public category: Category;
   public project: Project;
   public technology: Technology[];
-  public gallery: IImageUploadModel[];
+  public gallery: IGalleryItem[];
   public links: IComponentLink[];
   public createdAt: Date;
   public updatedAt: Date;

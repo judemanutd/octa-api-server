@@ -34,9 +34,58 @@ const router: Router = express.Router();
 
 const componentController: ComponentController = new ComponentController();
 
+// add an image to the component gallery
+router.post(
+  "/:projectId/component/:componentId/gallery",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const uploads = await receiveFiles(multipartFormDataParser, req, res);
+
+      const projectId = req.params.projectId;
+      const componentId = req.params.componentId;
+      const name = req.body.name;
+      const description = req.body.description;
+
+      const result = await componentController.addGalleryImage(
+        componentId,
+        projectId,
+        uploads,
+        name,
+        description,
+      );
+
+      return response(res, successResponse(result));
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// delete an image from the component gallery
+router.delete(
+  "/:projectId/component/:componentId/gallery/:galleryImageId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const projectId = req.params.projectId;
+      const componentId = req.params.componentId;
+      const galleryImageId = req.params.galleryImageId;
+
+      const result = await componentController.deleteGalleryImage(
+        componentId,
+        projectId,
+        galleryImageId,
+      );
+
+      return response(res, successResponse(result));
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 // add a cover image to a component
 router.post(
-  "/:projectId/component/:componentId/cover/",
+  "/:projectId/component/:componentId/cover",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const uploads = await receiveFiles(multipartFormDataParser, req, res);
@@ -55,7 +104,7 @@ router.post(
 
 // delete cover image for a project
 router.delete(
-  "/:projectId/component/:componentId/cover/",
+  "/:projectId/component/:componentId/cover",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const projectId = req.params.projectId;

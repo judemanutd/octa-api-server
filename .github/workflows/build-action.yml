@@ -24,7 +24,7 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v1
         with:
-          path: node_modules
+          path: functions/node_modules
           key: ${{ runner.OS }}-build-${{ hashFiles('functions/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-build-${{ env.cache-name }}-

@@ -300,7 +300,7 @@ components:
               type: integer
               format: int32
               description: HTTP status code
-              example: 403
+              example: 401
             message:
               type: string
               example: Missing Authorization Credentials

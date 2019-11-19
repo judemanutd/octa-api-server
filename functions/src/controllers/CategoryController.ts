@@ -3,6 +3,7 @@ import {
   fetchCategories,
   updateCategory,
   archiveCategory,
+  fetchCategory,
 } from "~repository/CategoryRepo";
 import { setRequired } from "~utils/helpers";
 import { missingParametersError } from "~exceptions/genericErrors";
@@ -75,6 +76,22 @@ export default class CategoryController {
   public fetchCategories = async () => {
     try {
       const categories = await fetchCategories();
+      return categories;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * fetch a single category
+   *
+   * @param {string} categoryId - id of the category
+   */
+  public fetchCategory = async (categoryId: string) => {
+    try {
+      const categories = await fetchCategory(categoryId);
       return categories;
     } catch (error) {
       throw error;

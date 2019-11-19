@@ -173,6 +173,89 @@ components:
           type: string
           description: updated at ISO string
           example: "2019-10-13T07:47:09.376Z"
+    Component:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the component
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: component name
+          example: Mobile Component
+        summary:
+          type: string
+          description: summary for the component
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+        description:
+          type: string
+          description: long description for the component
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        cover:
+          type: object
+          properties:
+            link:
+              type: string
+              description: public link for the cover image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+            meta:
+              $ref: "#/components/schemas/CloudStorageObject"
+        logo:
+          type: object
+          properties:
+            link:
+              type: string
+              description: public link for the logo image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+            meta:
+              $ref: "#/components/schemas/CloudStorageObject"
+        gallery:
+          type: array
+          items:
+            type: object
+            properties:
+              link:
+                type: string
+                description: public link for the image
+                example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+              meta:
+                $ref: "#/components/schemas/CloudStorageObject"
+        category:
+          type: object
+          $ref: "#/components/schemas/Category"
+        project:
+          type: object
+          $ref: "#/components/schemas/Project"
+        technology:
+          type: array
+          items:
+            $ref: "#/components/schemas/Technology"
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: type of link ie, app store, blog post, article
+                example: blog
+              url:
+                type: string
+                description: url for the link
+                example: https://google.com
+              text:
+                type: string
+                description: Text to display for the link
+                example: Google
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
     ItemInsertUpdateResponse:
       type: object
       properties:
@@ -235,6 +318,48 @@ components:
             message:
               type: string
               example: Client does not exist
+    CategoryNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Category does not exist
+    ProjectNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Project does not exist
+    ComponentNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Component does not exist
     EntityNotFound:
       type: object
       properties:
@@ -286,6 +411,24 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ClientNotFound"
+    CategoryNotFoundError:
+      description: Category Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CategoryNotFound"
+    ProjectNotFoundError:
+      description: Project Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProjectNotFound"
+    ComponentNotFoundError:
+      description: Component Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ComponentNotFound"
     EntityNotFoundError:
       description: Entity Not Found Error
       content:
@@ -322,6 +465,14 @@ components:
     projectId:
       in: path
       name: projectId
+      required: true
+      schema:
+        type: string
+        description: id of the project that is being modified
+        example: 31765c4c-2606-4e1b-a613-7866212a86b6
+    componentId:
+      in: path
+      name: componentId
       required: true
       schema:
         type: string
@@ -604,8 +755,8 @@ paths:
     post:
       tags:
         - project
-      description: Quick add a project
-      summary: Quick add a project, this is the initial call that needs to be made in order to create a project in the system.
+      summary: Quick add a project
+      description: Quick add a project, this is the initial call that needs to be made in order to create a project in the system.
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -701,8 +852,9 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
+                anyOf:
                   - $ref: "#/components/responses/ClientNotFoundError"
+                  - $ref: "#/components/responses/ProjectNotFoundError"
               examples:
                 clientNotFound:
                   summary: Client does not exist error
@@ -728,52 +880,12 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         404:
           $ref: "#/components/responses/EntityNotFoundError"
-  /project/cover/{projectId}:
+  /project/{projectId}/logo:
     post:
       tags:
         - project
-      description: Add a cover image to an existing project
-      summary: Add a cover image to an existing project, this will overwrite any existing cover image
-      parameters:
-        - $ref: "#/components/parameters/projectId"
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                cover:
-                  format: binary
-                  description: image file for the cover
-              required:
-                - cover
-      responses:
-        200:
-          $ref: "#/components/responses/FileUploadSuccess"
-        401:
-          $ref: "#/components/responses/UnauthorizedError"
-        404:
-          $ref: "#/components/responses/EntityNotFoundError"
-    delete:
-      tags:
-        - project
-      description: Delete a cover image for a project
-      summary: Delete a cover image for a project
-      parameters:
-        - $ref: "#/components/parameters/projectId"
-      responses:
-        200:
-          $ref: "#/components/responses/FileDeleteSuccess"
-        401:
-          $ref: "#/components/responses/UnauthorizedError"
-        404:
-          $ref: "#/components/responses/EntityNotFoundError"
-  /project/logo/{projectId}:
-    post:
-      tags:
-        - project
-      description: Add a logo image to an existing project
-      summary: Add a logo image to an existing project, this will overwrite any existing logo image
+      summary: Add a logo image to an existing project
+      description: Add a logo image to an existing project, this will overwrite any existing logo image
       parameters:
         - $ref: "#/components/parameters/projectId"
       requestBody:
@@ -808,3 +920,274 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         404:
           $ref: "#/components/responses/EntityNotFoundError"
+  /project/{projectId}/cover:
+    post:
+      tags:
+        - project
+      summary: Add a cover image to an existing project
+      description: Add a cover image to an existing project, this will overwrite any existing cover image
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cover:
+                  format: binary
+                  description: image file for the cover
+              required:
+                - cover
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
+    delete:
+      tags:
+        - project
+      description: Delete a cover image for a project
+      summary: Delete a cover image for a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          $ref: "#/components/responses/FileDeleteSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
+  /project/{projectId}/component:
+    post:
+      tags:
+        - component
+      summary: Quick add a component for a given project
+      description: Quick add a component for a project, this is the initial call that needs to be made in order to add a component in the system.
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: name of the component
+                  example: Mobile project
+                summary:
+                  type: string
+                  description: summary for the component
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                description:
+                  type: string
+                  description: long description for the component
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                categoryId:
+                  type: string
+                  description: id of the category to which the component belongs
+                  example: e140073a-092e-48dd-8159-c0a67b617894
+                technologyId:
+                  type: array
+                  items:
+                    type: string
+                    example:
+                      [
+                        e140073a-092e-48dd-8159-c0a67b617894,
+                        e140073a-092e-48dd-8159-c0a67b617895,
+                      ]
+                links:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: type of link ie, app store, blog post, article
+                        example: blog
+                      url:
+                        type: string
+                        description: url for the link
+                        example: https://google.com
+                      text:
+                        type: string
+                        description: Text to display for the link
+                        example: Google
+              required:
+                - name
+                - projectId
+                - categoryId
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: "#/components/responses/CategoryNotFoundError"
+                  - $ref: "#/components/responses/ProjectNotFoundError"
+    get:
+      tags:
+        - component
+      summary: Fetch all components for a project
+      description: Fetch all the components that belong to a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Component"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /project/{projectId}/component/{componentId}:
+    put:
+      tags:
+        - component
+      summary: Update contents for a component
+      description: Update component attributes excluding cover, logo and gallery. This update will overwrite existing values
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: name of the component
+                  example: Mobile project
+                summary:
+                  type: string
+                  description: summary for the component
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                description:
+                  type: string
+                  description: long description for the component
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                categoryId:
+                  type: string
+                  description: id of the category to which the component belongs
+                  example: e140073a-092e-48dd-8159-c0a67b617894
+                technologyId:
+                  type: array
+                  items:
+                    type: string
+                    example:
+                      [
+                        e140073a-092e-48dd-8159-c0a67b617894,
+                        e140073a-092e-48dd-8159-c0a67b617895,
+                      ]
+                links:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: type of link ie, app store, blog post, article
+                        example: blog
+                      url:
+                        type: string
+                        description: url for the link
+                        example: https://google.com
+                      text:
+                        type: string
+                        description: Text to display for the link
+                        example: Google
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: "#/components/responses/CategoryNotFoundError"
+                  - $ref: "#/components/responses/ProjectNotFoundError"
+                  - $ref: "#/components/responses/ComponentNotFoundError"
+    get:
+      tags:
+        - component
+      summary: Fetch a single component for a project
+      description: Fetch a single component that belongs to a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: object
+                    $ref: "#/components/schemas/Component"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          description: Entity not found
+          $ref: "#/components/responses/ComponentNotFoundError"
+  /project/{projectId}/component/{componentId}/cover:
+    post:
+      tags:
+        - component
+      summary: Add a cover image to an existing component
+      description: Add a cover image to an existing component, this will overwrite any existing cover image
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cover:
+                  format: binary
+                  description: image file for the cover
+              required:
+                - cover
+      responses:
+        200:
+          $ref: "#/components/responses/FileUploadSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/ComponentNotFoundError"
+    delete:
+      tags:
+        - component
+      description: Delete a cover image for a component
+      summary: Delete a cover image for a component
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+        - $ref: "#/components/parameters/componentId"
+      responses:
+        200:
+          $ref: "#/components/responses/FileDeleteSuccess"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/ComponentNotFoundError"

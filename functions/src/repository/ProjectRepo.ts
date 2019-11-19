@@ -287,7 +287,7 @@ export const archiveProject = async (projectId: string) => {
   }
 };
 
-const parseRow = async (row: FirebaseFirestore.DocumentData) => {
+export const parseRow = async (row: FirebaseFirestore.DocumentData) => {
   try {
     const client: FirebaseFirestore.DocumentSnapshot = await row.client.get();
     row.client = client.exists ? client.data() : null;

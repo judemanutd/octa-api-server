@@ -80,3 +80,5 @@ node_modules/
 octalogic-portfolio-dev-firebase.json
 
 .env
+
+.runtimeconfig.json

@@ -1,4 +1,4 @@
-import admin from "firebase-admin";
+import * as admin from "firebase-admin";
 
 const TAG = " functions/utils/db.ts ===> ";
 

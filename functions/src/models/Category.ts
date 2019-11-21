@@ -17,6 +17,7 @@ class Category {
 
   public id: string;
   public name: string;
+  public status: number;
   public createdAt: Date;
   public updatedAt: Date;
 
@@ -24,11 +25,12 @@ class Category {
     const validatedPayload = this.validate(payload);
     this.id = validatedPayload.id;
     this.name = validatedPayload.name;
+    this.status = validatedPayload.status;
     this.createdAt = validatedPayload.createdAt;
     this.updatedAt = validatedPayload.updatedAt;
   }
 
-  private validate = payload => {
+  protected validate = payload => {
     try {
       return schema().validateSync(payload);
     } catch (error) {

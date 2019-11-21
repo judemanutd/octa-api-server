@@ -5,6 +5,7 @@ import {
   archiveCategory,
   fetchCategory,
 } from "~repository/CategoryRepo";
+import { manageCategory } from "~repository/AlgoliaRepo";
 import { setRequired } from "~utils/helpers";
 import { missingParametersError } from "~exceptions/genericErrors";
 
@@ -22,7 +23,13 @@ export default class CategoryController {
       if (!isValid) throw missingParametersError();
 
       const category = await addCategory(name);
-      return category;
+
+      await manageCategory(category);
+
+      return {
+        id: category.id,
+        message: "Successfully Added",
+      };
     } catch (error) {
       throw error;
     }
@@ -41,8 +48,11 @@ export default class CategoryController {
       const isValid = setRequired(id, name);
       if (!isValid) throw missingParametersError();
 
-      const category = await updateCategory(id, name);
-      return category;
+      await fetchCategory(id);
+
+      const result = await updateCategory(id, name);
+
+      return result;
     } catch (error) {
       throw error;
     }
@@ -60,8 +70,10 @@ export default class CategoryController {
       const isValid = setRequired(id);
       if (!isValid) throw missingParametersError();
 
-      const category = await archiveCategory(id);
-      return category;
+      await fetchCategory(id);
+
+      const result = await archiveCategory(id);
+      return result;
     } catch (error) {
       throw error;
     }

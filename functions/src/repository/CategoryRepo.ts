@@ -19,10 +19,8 @@ export const addCategory = async (name: string) => {
       .collection("categories")
       .doc(obj.id)
       .set(obj);
-    return {
-      id: obj.id,
-      message: "Successfully Added",
-    };
+
+    return obj as Category;
   } catch (error) {
     throw parseDbError(error);
   }

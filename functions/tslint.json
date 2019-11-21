@@ -51,7 +51,8 @@
     "prefer-for-of": { "severity": "warning" },
     "unified-signatures": { "severity": "warning" },
     "prefer-const": { "severity": "warning" },
-    "trailing-comma": true
+    "trailing-comma": true,
+    "prefer-object-spread": false
   },
 
   "defaultSeverity": "error",

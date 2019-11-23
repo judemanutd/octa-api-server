@@ -270,6 +270,37 @@ components:
           type: string
           description: updated at ISO string
           example: "2019-10-13T07:47:09.376Z"
+    Portfolio:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the portfolio
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        title:
+          type: string
+          description: portfolio name
+          example: Mobile Portfolio
+        code:
+          type: string
+          description: unique code for the portfolio link
+          example: yXbXwlBxfp
+        description:
+          type: string
+          description: long description for the portfolio
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        components:
+          type: array
+          items:
+            $ref: "#/components/schemas/Component"
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
     ItemInsertUpdateResponse:
       type: object
       properties:
@@ -318,6 +349,20 @@ components:
             message:
               type: string
               example: Missing Authorization Credentials
+    MissingParameters:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 422
+            message:
+              type: string
+              example: Request has missing parameters
     ClientNotFound:
       type: object
       properties:
@@ -419,6 +464,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Unauthorized"
+    MissingParametersError:
+      description: Missing Parameters Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MissingParameters"
     ClientNotFoundError:
       description: Client Not Found Error
       content:
@@ -499,6 +550,14 @@ components:
       schema:
         type: string
         description: id of the project that is being modified
+        example: 31765c4c-2606-4e1b-a613-7866212a86b6
+    portfolioId:
+      in: path
+      name: portfolioId
+      required: true
+      schema:
+        type: string
+        description: id of the portfolio that is being modified
         example: 31765c4c-2606-4e1b-a613-7866212a86b6
 paths:
   /category:
@@ -1311,3 +1370,161 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         404:
           $ref: "#/components/responses/ComponentNotFoundError"
+  /portfolio:
+    post:
+      tags:
+        - portfolio
+      summary: Add a portfolio
+      description: Add a portfolio, the id fields in the request body are required but the arrays can be empty. At least 1 array needs to have a value
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: title for the portfolio
+                  example: Mobile project
+                description:
+                  type: string
+                  description: long description for the portfolio
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                componentId:
+                  type: array
+                  items:
+                    type: string
+                technologyId:
+                  type: array
+                  items:
+                    type: string
+                categoryId:
+                  type: array
+                  items:
+                    type: string
+                projectId:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - title
+                - componentId
+                - technologyId
+                - categoryId
+                - projectId
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        422:
+          $ref: "#/components/responses/MissingParametersError"
+    get:
+      tags:
+        - portfolio
+      summary: Fetch all portfolios listed
+      description: Fetch all portfolios listed in the system
+      parameters:
+        - in: query
+          name: showComponents
+          schema:
+            type: boolean
+            description: indicates if components should be returned for each portfolio or not, if false an empty components array is returned
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Portfolio"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+  /portfolio/{portfolioId}:
+    put:
+      tags:
+        - portfolio
+      summary: Update a portfolio
+      description: Update a portfolio, the id fields in the request body are required but the arrays can be empty. At least 1 array needs to have a value
+      parameters:
+        - $ref: "#/components/parameters/portfolioId"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: title for the portfolio
+                  example: Mobile project
+                description:
+                  type: string
+                  description: long description for the portfolio
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                componentId:
+                  type: array
+                  items:
+                    type: string
+                technologyId:
+                  type: array
+                  items:
+                    type: string
+                categoryId:
+                  type: array
+                  items:
+                    type: string
+                projectId:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - title
+                - componentId
+                - technologyId
+                - categoryId
+                - projectId
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        422:
+          $ref: "#/components/responses/MissingParametersError"
+    get:
+      tags:
+        - portfolio
+      summary: Fetch a single portfolio
+      description: Fetch a single portfolio from the system
+      parameters:
+        - $ref: "#/components/parameters/portfolioId"
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    $ref: "#/components/schemas/Portfolio"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - portfolio
+      description: Archive a portfolio
+      summary: Archives a portfolio
+      parameters:
+        - $ref: "#/components/parameters/portfolioId"
+      responses:
+        200:
+          $ref: "#/components/responses/InsertUpdateResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"

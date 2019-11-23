@@ -187,6 +187,131 @@ export const fetchComponents = async (projectId: string) => {
 /**
  * ADMIN
  *
+ * fetch all components for the following filter critera
+ *
+ * @param componentId - array of component ids
+ * @param projectId - array of project ids
+ * @param technologyId - array of technology ids
+ * @param categoryId - array of category ids
+ */
+export const filterComponents = async (
+  componentId?: string[],
+  projectId?: string[],
+  technologyId?: string[],
+  categoryId?: string[],
+) => {
+  try {
+    const result: Component[] = [];
+
+    // fetch all components for the given component ids
+    if (componentId && componentId.length > 0) {
+      const refs: FirebaseFirestore.DocumentReference[] = [];
+      componentId.forEach(item => {
+        refs.push(
+          getDb()
+            .collection("components")
+            .doc(item),
+        );
+      });
+
+      const docsPromise = (await getDb().getAll(...refs)).map(async component =>
+        parseRow(component.data()),
+      );
+
+      result.push(...(await Promise.all(docsPromise)));
+    }
+
+    // fetch all components with the given project ids
+    if (projectId && projectId.length > 0) {
+      const projectPromises = projectId.map(async item => {
+        const projectRef = getDb()
+          .collection("projects")
+          .doc(item);
+
+        // fetch all components that have the given project id
+        const components = await getDb()
+          .collection("components")
+          .where("project", "==", projectRef)
+          .where("status", "==", STATUS_ACTIVE)
+          .get();
+
+        return Promise.all(components.docs.map(row => parseRow(row.data())));
+      });
+
+      const projectComponents = await Promise.all(projectPromises);
+      projectComponents.map(projectComponent => {
+        result.push(...projectComponent);
+      });
+    }
+
+    // filter all components with the given technology
+    if (technologyId && technologyId.length > 0) {
+      const technologyComponentsPromises = technologyId.map(async item => {
+        const components = await getDb()
+          .collection("components")
+          .where(
+            "technology",
+            "array-contains",
+            getDb()
+              .collection("technologies")
+              .doc(item),
+          )
+          .where("status", "==", STATUS_ACTIVE)
+          .get();
+
+        return Promise.all(components.docs.map(row => parseRow(row.data())));
+      });
+
+      const technologyComponents = await Promise.all(technologyComponentsPromises);
+      technologyComponents.map(technologyComponent => {
+        result.push(...technologyComponent);
+      });
+    }
+
+    // filter all components with the given category
+    if (categoryId && categoryId.length > 0) {
+      const categoryComponentsPromises = categoryId.map(async item => {
+        const components = await getDb()
+          .collection("components")
+          .where(
+            "category",
+            "==",
+            getDb()
+              .collection("categories")
+              .doc(item),
+          )
+          .where("status", "==", STATUS_ACTIVE)
+          .get();
+
+        return Promise.all(components.docs.map(row => parseRow(row.data())));
+      });
+
+      const categoryComponents = await Promise.all(categoryComponentsPromises);
+      categoryComponents.map(categoryComponent => {
+        result.push(...categoryComponent);
+      });
+    }
+
+    if (result.length <= 0) return result;
+
+    // filter to only have unique components
+    const componentsObj = {};
+    result.forEach(component => {
+      componentsObj[`${component.id}`] = component;
+    });
+    const filteredComponents: Component[] = Object.keys(componentsObj).map(key => {
+      return componentsObj[key];
+    });
+
+    return filteredComponents;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * ADMIN
+ *
  * fetch a single component
  *
  * @param {string} componentId - component id to which this component belongs
@@ -329,7 +454,7 @@ export const deleteGalleryImage = async (
   }
 };
 
-const parseRow = async (row: FirebaseFirestore.DocumentData) => {
+export const parseRow = async (row: FirebaseFirestore.DocumentData) => {
   try {
     const category: FirebaseFirestore.DocumentSnapshot = await row.category.get();
     row.category = category.exists ? await parseCategoryRow(category.data()) : null;

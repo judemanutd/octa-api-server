@@ -4,7 +4,7 @@ import * as functions from "firebase-functions";
 import server from "./app";
 import { connectToServer } from "./utils/db";
 
-connectToServer(functions);
+connectToServer();
 
 export const api = functions
   .runWith({

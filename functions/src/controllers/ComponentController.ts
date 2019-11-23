@@ -12,6 +12,7 @@ import {
   updatedCoverImage,
   addGalleryImage,
   deleteGalleryImage,
+  filterComponents,
 } from "~repository/ComponentRepo";
 import { IMulterFileUpload } from "~interfaces/IMulterFileUpload";
 import { uploadFile, deleteFile } from "~utils/fileHelper";
@@ -377,6 +378,40 @@ export default class ComponentController {
       await deleteFile(galleryItemToDelete.meta);
 
       return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN
+   *
+   * fetch all components for the following filter critera
+   *
+   * @param componentId - array of component ids
+   * @param projectId - array of project ids
+   * @param technologyId - array of technology ids
+   * @param categoryId - array of category ids
+   */
+  public filterComponents = async (
+    componentId?: string[],
+    projectId?: string[],
+    technologyId?: string[],
+    categoryId?: string[],
+  ) => {
+    try {
+      if (
+        componentId.length <= 0 &&
+        projectId.length <= 0 &&
+        technologyId.length <= 0 &&
+        categoryId.length <= 0
+      ) {
+        return [];
+      }
+
+      const components = await filterComponents(componentId, projectId, technologyId, categoryId);
+
+      return components;
     } catch (error) {
       throw error;
     }

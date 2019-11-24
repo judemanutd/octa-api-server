@@ -7,7 +7,9 @@ const gallerySchema = () =>
     name: string().nullable(true),
     description: string().nullable(true),
     link: string().required(),
-    meta: cloudStorageUploadSchema().required(),
+    meta: cloudStorageUploadSchema()
+      .nullable()
+      .default(() => null),
   });
 
 export default gallerySchema;

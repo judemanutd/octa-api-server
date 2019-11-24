@@ -1,6 +1,6 @@
 openapi: "3.0.2"
 info:
-  title: Octalogic Portfolio Dev API Server
+  title: Octalogic Portfolio Admin API Server
   version: "1.0"
   x-logo:
     url: "https://octalogic.in/public/images/logos/octalogic.svg"

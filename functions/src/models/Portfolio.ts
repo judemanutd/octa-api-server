@@ -27,6 +27,7 @@ class Portfolio {
   public id: string;
   public title: string;
   public description: string;
+  public status: number;
   public components: Component[];
   public createdAt: Date;
   public updatedAt: Date;
@@ -40,6 +41,7 @@ class Portfolio {
       this.components = validatedPayload.components.map(
         componentSchema => new Component(componentSchema),
       );
+      this.status = validatedPayload.status;
       this.createdAt = validatedPayload.createdAt;
       this.updatedAt = validatedPayload.updatedAt;
     } catch (error) {

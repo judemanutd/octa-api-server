@@ -123,6 +123,38 @@ export const fetchPortFolio = async (portfolioId: string) => {
 };
 
 /**
+ * PUBLIC
+ *
+ * fetch a single portfolio for display to the public
+ *
+ * @param portfolioCode - unique code of the portfolio that needs to be fetched
+ */
+export const fetchPublicPortfolio = async (portfolioCode: string) => {
+  try {
+    const portfoliosQuery = await getDb()
+      .collection("portfolios")
+      .where("code", "==", portfolioCode)
+      .get();
+
+    const promises = portfoliosQuery.docs.map(item => parseRow(item.data(), true, true));
+    const portfolios = await Promise.all(promises);
+
+    if (portfolios.length !== 1) {
+      // portfolio not found
+      throw entityNotFoundError("Portfolio does not exist");
+    }
+
+    const portfolio = portfolios[0];
+
+    if (portfolio.status !== STATUS_ACTIVE) throw entityNotFoundError("Portfolio does not exist");
+
+    return portfolio;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
  * ADMIN
  *
  * fetch all portfolios
@@ -173,13 +205,16 @@ export const archivePortFolio = async (portfolioId: string) => {
 export const parseRow = async (
   row: FirebaseFirestore.DocumentData,
   showComponents: boolean = false,
+  isPublic: boolean = false,
 ) => {
   try {
     if (showComponents) {
       const componentPromises = row.components.map(
         async (componentRef: FirebaseFirestore.DocumentReference) => {
           const component: FirebaseFirestore.DocumentSnapshot = await componentRef.get();
-          const componentData = component.exists ? await parseComponentRow(component.data()) : null;
+          const componentData = component.exists
+            ? await parseComponentRow(component.data(), isPublic)
+            : null;
           return componentData;
         },
       );

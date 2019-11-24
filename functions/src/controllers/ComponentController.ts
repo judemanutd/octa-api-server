@@ -177,20 +177,21 @@ export default class ComponentController {
   };
 
   /**
-   * ADMIN
+   * ADMIN & PUBLIC
    *
    * fetch all components for a given project
    *
    * @param {string} projectId - id of the project for which all components are fetched
+   * @param {boolean} isPublic - indicates if the data is being fetched for public, will hide sensitive data
    */
-  public fetchComponents = async (projectId: string) => {
+  public fetchComponents = async (projectId: string, isPublic: boolean = false) => {
     try {
       const isValid = setRequired(projectId);
       if (!isValid) throw missingParametersError();
 
       const project = await projectController.fetchProject(projectId);
 
-      const component = await fetchComponents(project.id);
+      const component = await fetchComponents(project.id, isPublic);
 
       return component;
     } catch (error) {

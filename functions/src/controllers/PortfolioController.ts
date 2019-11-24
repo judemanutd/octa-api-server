@@ -9,6 +9,7 @@ import {
   fetchPortFolio,
   updatePortfolio,
   archivePortFolio,
+  fetchPublicPortfolio,
 } from "~repository/PortfolioRepo";
 
 const componentController: ComponentController = new ComponentController();
@@ -153,6 +154,25 @@ export default class PortfolioController {
   public fetchPortfolios = async (showComponents: boolean = false) => {
     try {
       const result = await fetchPortFolios(showComponents);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * PUBLIC
+   *
+   * fetch a single portfolio for display to the public
+   *
+   * @param portfolioCode - unique code of the portfolio that needs to be fetched
+   */
+  public fetchPublicPortfolio = async (portfolioCode: string) => {
+    try {
+      const isValid = setRequired(portfolioCode);
+      if (!isValid) throw missingParametersError();
+
+      const result = await fetchPublicPortfolio(portfolioCode);
       return result;
     } catch (error) {
       throw error;

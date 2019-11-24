@@ -18,14 +18,18 @@ const componentSchema = () =>
     cover: object()
       .shape({
         link: string().required(),
-        meta: cloudStorageUploadSchema().required(),
+        meta: cloudStorageUploadSchema()
+          .nullable()
+          .default(() => null),
       })
       .default(() => null)
       .nullable(),
     logo: object()
       .shape({
         link: string().required(),
-        meta: cloudStorageUploadSchema().required(),
+        meta: cloudStorageUploadSchema()
+          .nullable()
+          .default(() => null),
       })
       .default(() => null)
       .nullable(),

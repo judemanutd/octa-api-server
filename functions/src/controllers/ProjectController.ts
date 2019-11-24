@@ -351,16 +351,18 @@ export default class ProjectController {
   };
 
   /**
-   * ADMIN
+   * ADMIN & PUBLIC
    *
    * fetch a single project in the system
+   * @param {string} projectId - id of the project
+   * @param {boolean} isPublic - indicates if the data is being fetched for public, will hide sensitive data
    */
-  public fetchProject = async (projectId: string) => {
+  public fetchProject = async (projectId: string, isPublic: boolean = false) => {
     try {
       const isValid = setRequired(projectId);
       if (!isValid) throw missingParametersError();
 
-      const project = await fetchProject(projectId);
+      const project = await fetchProject(projectId, isPublic);
 
       return project;
     } catch (error) {
@@ -372,10 +374,12 @@ export default class ProjectController {
    * ADMIN
    *
    * fetch all projects in the system
+   *
+   * @param {boolean} isPublic - indicates if the data is being fetched for public, will hide sensitive data
    */
-  public fetchAllProjects = async () => {
+  public fetchAllProjects = async (isPublic: boolean = false) => {
     try {
-      const projects = await fetchAllProjects();
+      const projects = await fetchAllProjects(isPublic);
 
       return projects;
     } catch (error) {

@@ -163,8 +163,9 @@ export const updateComponent = async (
  * fetch all components for a project
  *
  * @param {string} projectId - project for which all components are being fetched
+ * @param {boolean} isPublic - indicates if the data is being fetched for public, will hide sensitive data
  */
-export const fetchComponents = async (projectId: string) => {
+export const fetchComponents = async (projectId: string, isPublic: boolean = false) => {
   try {
     const projectRef = getDb()
       .collection("projects")
@@ -176,7 +177,7 @@ export const fetchComponents = async (projectId: string) => {
       .where("status", "==", STATUS_ACTIVE)
       .get();
 
-    const result = await Promise.all(components.docs.map(row => parseRow(row.data())));
+    const result = await Promise.all(components.docs.map(row => parseRow(row.data(), isPublic)));
 
     return result;
   } catch (error) {
@@ -454,13 +455,13 @@ export const deleteGalleryImage = async (
   }
 };
 
-export const parseRow = async (row: FirebaseFirestore.DocumentData) => {
+export const parseRow = async (row: FirebaseFirestore.DocumentData, isPublic: boolean = false) => {
   try {
     const category: FirebaseFirestore.DocumentSnapshot = await row.category.get();
     row.category = category.exists ? await parseCategoryRow(category.data()) : null;
 
     const project: FirebaseFirestore.DocumentSnapshot = await row.project.get();
-    row.project = project.exists ? await parseProjectRow(project.data()) : null;
+    row.project = project.exists ? await parseProjectRow(project.data(), isPublic) : null;
 
     const technologyPromises = row.technology.map(
       async (technologyRef: FirebaseFirestore.DocumentReference) => {
@@ -474,7 +475,17 @@ export const parseRow = async (row: FirebaseFirestore.DocumentData) => {
     row.createdAt = row.createdAt.toDate();
     row.updatedAt = row.updatedAt.toDate();
 
-    return new Component(row);
+    const component = new Component(row);
+
+    if (isPublic) {
+      if (component.cover && component.cover.meta) delete component.cover.meta;
+      if (component.logo && component.logo.meta) delete component.logo.meta;
+
+      const gallery = component.gallery.map(({ meta, ...params }) => params);
+      component.gallery = gallery;
+    }
+
+    return component;
   } catch (error) {
     throw error;
   }

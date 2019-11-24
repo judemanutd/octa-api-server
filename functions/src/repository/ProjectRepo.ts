@@ -282,19 +282,20 @@ export const updatedLogoImage = async (projectId: string, file?: ICloudStorageUp
 };
 
 /**
- * ADMIN
+ * ADMIN & PUBLIC
  *
  * fetch all projects in the system
  *
+ * @param {boolean} isPublic - indicates if the data is being fetched for public, will hide sensitive data
  */
-export const fetchAllProjects = async () => {
+export const fetchAllProjects = async (isPublic: boolean = false) => {
   try {
     const projects = await getDb()
       .collection("projects")
       .where("status", "==", STATUS_ACTIVE)
       .get();
 
-    const promises = projects.docs.map(project => parseRow(project.data()));
+    const promises = projects.docs.map(project => parseRow(project.data(), isPublic));
 
     return await Promise.all(promises);
   } catch (error) {
@@ -303,13 +304,14 @@ export const fetchAllProjects = async () => {
 };
 
 /**
- * ADMIN
+ * ADMIN & PUBLIC
  *
  * fetch a single project
  *
  * @param {string} projectId - id of the project
+ * @param {boolean} isPublic - indicates if the data is being fetched for public, will hide sensitive data
  */
-export const fetchProject = async (projectId: string) => {
+export const fetchProject = async (projectId: string, isPublic: boolean = false) => {
   try {
     const project = await getDb()
       .collection("projects")
@@ -319,7 +321,7 @@ export const fetchProject = async (projectId: string) => {
     if (!project.exists || (project.exists && project.data().status !== STATUS_ACTIVE))
       throw entityNotFoundError("Project does not exist");
 
-    return parseRow(project.data());
+    return parseRow(project.data(), isPublic);
   } catch (error) {
     throw parseDbError(error);
   }
@@ -351,7 +353,7 @@ export const archiveProject = async (projectId: string) => {
   }
 };
 
-export const parseRow = async (row: FirebaseFirestore.DocumentData) => {
+export const parseRow = async (row: FirebaseFirestore.DocumentData, isPublic: boolean = false) => {
   try {
     const client: FirebaseFirestore.DocumentSnapshot = await row.client.get();
     row.client = client.exists ? client.data() : null;
@@ -362,7 +364,17 @@ export const parseRow = async (row: FirebaseFirestore.DocumentData) => {
     row.createdAt = row.createdAt.toDate();
     row.updatedAt = row.updatedAt.toDate();
 
-    return new Project(row);
+    const project = new Project(row);
+
+    if (isPublic) {
+      if (project.cover && project.cover.meta) delete project.cover.meta;
+      if (project.logo && project.logo.meta) delete project.logo.meta;
+
+      const gallery = project.gallery.map(({ meta, ...params }) => params);
+      project.gallery = gallery;
+    }
+
+    return project;
   } catch (error) {
     throw error;
   }

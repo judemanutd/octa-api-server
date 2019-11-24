@@ -5,5 +5,5 @@ export interface IGalleryItem {
   name: string;
   description: string;
   link: string;
-  meta: ICloudStorageUploadResponse;
+  meta?: ICloudStorageUploadResponse;
 }

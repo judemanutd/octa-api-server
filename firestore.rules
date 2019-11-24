@@ -7,6 +7,11 @@ service cloud.firestore {
       allow write: if get(/databases/$(database)/documents/$(request.auth.uid)).data.admin == true
     }
     
+    match /portfolios/{portfolio} {
+      allow read: if true;
+      allow write: if get(/databases/$(database)/documents/$(request.auth.uid)).data.admin == true
+    }
+
     match /components/{component} {
       allow read: if true;
       allow write: if get(/databases/$(database)/documents/$(request.auth.uid)).data.admin == true

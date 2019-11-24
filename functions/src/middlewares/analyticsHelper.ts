@@ -15,7 +15,7 @@ export const analytics = () => async (req: Request, res: Response, next: NextFun
       agent,
     };
 
-    const clientIp = requestIp.getClientIp(req) || "103.97.95.105";
+    const clientIp = requestIp.getClientIp(req);
     const ipKey = functions.config().ip.api_key;
 
     if (clientIp && ipKey) {

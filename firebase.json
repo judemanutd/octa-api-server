@@ -23,12 +23,12 @@
         "destination": "/swagger_public_doc.html"
       },
       {
-        "source": "/docs/public",
-        "destination": "/swagger_public_doc.html"
-      },
-      {
         "source": "/docs/swagger/admin",
         "destination": "/swagger_admin_doc.html"
+      },
+      {
+        "source": "/docs/public",
+        "destination": "/swagger_public_doc.html"
       },
       {
         "source": "/docs/admin",

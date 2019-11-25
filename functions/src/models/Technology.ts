@@ -2,18 +2,21 @@ import uuid from "uuid/v4";
 import Category from "./Category";
 import schema from "~schemas/TechnologySchema";
 import { STATUS_ACTIVE } from "~utils/constants";
+import { IIcon } from "~interfaces/IIcon";
 
 class Technology {
   public static init = (
     name: string,
     categoryRef: FirebaseFirestore.DocumentReference,
     link?: string,
+    icon?: IIcon,
   ) => {
     const id = uuid();
 
     const obj: any = {
       id,
       name,
+      icon,
       status: STATUS_ACTIVE,
       category: categoryRef,
       createdAt: new Date(),
@@ -27,6 +30,8 @@ class Technology {
 
   public id: string;
   public name: string;
+  public link?: string;
+  public icon?: IIcon;
   public category: Category;
   public createdAt: Date;
   public updatedAt: Date;
@@ -35,6 +40,8 @@ class Technology {
     const validatedPayload = this.validate(payload);
     this.id = validatedPayload.id;
     this.name = validatedPayload.name;
+    this.link = validatedPayload.link;
+    this.icon = validatedPayload.icon;
     this.category = new Category(validatedPayload.category);
     this.createdAt = validatedPayload.createdAt;
     this.updatedAt = validatedPayload.updatedAt;

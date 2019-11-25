@@ -3,6 +3,7 @@ import { parseDbError } from "~utils/dbHelper";
 import { entityNotFoundError } from "~exceptions/genericErrors";
 import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
 import Technology from "~models/Technology";
+import { IIcon } from "~interfaces/IIcon";
 
 /**
  * ADMIN
@@ -12,8 +13,14 @@ import Technology from "~models/Technology";
  * @param {string} name - name of the technology
  * @param {string} categoryId - id of the category to which the technology belongs
  * @param {string} link - optional link to the technology homepage
+ * @param {IIcon} icon - accepts the optional icon meta data
  */
-export const addTechnology = async (name: string, categoryId: string, link?: string) => {
+export const addTechnology = async (
+  name: string,
+  categoryId: string,
+  link?: string,
+  icon?: IIcon,
+) => {
   try {
     const obj = Technology.init(
       name,
@@ -21,6 +28,7 @@ export const addTechnology = async (name: string, categoryId: string, link?: str
         .collection("categories")
         .doc(categoryId),
       link,
+      icon,
     );
 
     const category = await getDb()
@@ -52,12 +60,14 @@ export const addTechnology = async (name: string, categoryId: string, link?: str
  * @param {string} name - name of the technology
  * @param {string} categoryId - id of the category to which the technology belongs
  * @param {string} link - optional link to the technology homepage
+ * @param {IIcon} icon - accepts the optional icon meta data
  */
 export const updateTechnology = async (
   id: string,
   name: string,
   categoryId: string,
   link?: string,
+  icon?: IIcon,
 ) => {
   try {
     const category = await getDb()
@@ -76,6 +86,8 @@ export const updateTechnology = async (
     };
 
     if (link) obj.link = link;
+
+    if (icon) obj.icon = icon;
 
     await getDb()
       .collection("technologies")

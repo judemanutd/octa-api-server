@@ -1,6 +1,7 @@
 import express, { Request, Response, Router, NextFunction } from "express";
 import { response, successResponse } from "~utils/helpers";
 import TechnologyController from "~controllers/TechnologyController";
+import { IIcon } from "~interfaces/IIcon";
 
 const router: Router = express.Router();
 
@@ -20,8 +21,18 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     const name: string = req.body.name;
     const categoryId: string = req.body.category;
     const link: string = req.body.link;
+    const icon_type: string = req.body.icon_type;
+    const icon_name: string = req.body.icon_name;
 
-    const result = await technologyController.addTechnology(name, categoryId, link);
+    let icon: IIcon;
+    if (icon_type && icon_name) {
+      icon = {
+        type: icon_type,
+        name: icon_name,
+      };
+    }
+
+    const result = await technologyController.addTechnology(name, categoryId, link, icon);
 
     return response(res, successResponse(result));
   } catch (error) {
@@ -35,8 +46,18 @@ router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
     const name: string = req.body.name;
     const categoryId: string = req.body.category;
     const link: string = req.body.link;
+    const icon_type: string = req.body.icon_type;
+    const icon_name: string = req.body.icon_name;
 
-    const result = await technologyController.updateTechnology(id, name, categoryId, link);
+    let icon: IIcon;
+    if (icon_type && icon_name) {
+      icon = {
+        type: icon_type,
+        name: icon_name,
+      };
+    }
+
+    const result = await technologyController.updateTechnology(id, name, categoryId, link, icon);
 
     return response(res, successResponse(result));
   } catch (error) {

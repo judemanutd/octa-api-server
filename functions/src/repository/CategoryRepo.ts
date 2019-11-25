@@ -3,6 +3,7 @@ import { parseDbError } from "~utils/dbHelper";
 import { STATUS_ACTIVE, STATUS_INACTIVE } from "~utils/constants";
 import Category from "~models/Category";
 import { entityNotFoundError } from "~exceptions/genericErrors";
+import { IIcon } from "~interfaces/IIcon";
 
 /**
  * ADMIN
@@ -10,10 +11,11 @@ import { entityNotFoundError } from "~exceptions/genericErrors";
  * adds a category
  *
  * @param {string} name - name of the category
+ * @param {IIcon} icon - accepts the optional icon meta data
  */
-export const addCategory = async (name: string) => {
+export const addCategory = async (name: string, icon?: IIcon) => {
   try {
-    const obj = Category.init(name);
+    const obj = Category.init(name, icon);
 
     await getDb()
       .collection("categories")
@@ -35,16 +37,21 @@ export const addCategory = async (name: string) => {
  *
  * @param {string} id - id of the category that should be updated
  * @param {string} name - new name of the category
+ * @param {IIcon} icon - accepts the optional icon meta data
  */
-export const updateCategory = async (id: string, name: string) => {
+export const updateCategory = async (id: string, name: string, icon?: IIcon) => {
   try {
+    const updateObj: any = {
+      name,
+      updatedAt: new Date(),
+    };
+
+    if (icon) updateObj.icon = icon;
+
     await getDb()
       .collection("categories")
       .doc(id)
-      .update({
-        name,
-        updatedAt: new Date(),
-      });
+      .update(updateObj);
     return {
       id,
       message: "Successfully Updated",

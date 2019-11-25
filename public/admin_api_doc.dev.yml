@@ -30,6 +30,17 @@ components:
           type: string
           description: category name
           example: Web Development
+        icon:
+          type: object
+          properties:
+            type:
+              type: string
+              description: the type of icon
+              example: mdi
+            name:
+              type: string
+              description: name of the icon
+              example: clock
         createdAt:
           type: string
           description: created at ISO string
@@ -72,6 +83,17 @@ components:
           type: string
           description: technology name
           example: Node JS
+        icon:
+          type: object
+          properties:
+            type:
+              type: string
+              description: the type of icon
+              example: mdi
+            name:
+              type: string
+              description: name of the icon
+              example: clock
         category:
           $ref: "#/components/schemas/Category"
         createdAt:
@@ -593,6 +615,12 @@ paths:
               properties:
                 name:
                   $ref: "#/components/schemas/GenericStringRequestBody"
+                icon_type:
+                  type: string
+                  description: the type of icon ie, mdi, fa
+                icon_name:
+                  type: string
+                  description: name of the icon
               required:
                 - name
       responses:
@@ -616,6 +644,12 @@ paths:
               properties:
                 name:
                   $ref: "#/components/schemas/GenericStringRequestBody"
+                icon_type:
+                  type: string
+                  description: the type of icon ie, mdi, fa
+                icon_name:
+                  type: string
+                  description: name of the icon
               required:
                 - name
       responses:
@@ -677,6 +711,12 @@ paths:
                 link:
                   type: string
                   description: link to the technology homepage
+                icon_type:
+                  type: string
+                  description: the type of icon ie, mdi, fa
+                icon_name:
+                  type: string
+                  description: name of the icon
               required:
                 - name
                 - categoryId
@@ -706,6 +746,12 @@ paths:
                 link:
                   type: string
                   description: link to the technology homepage
+                icon_type:
+                  type: string
+                  description: the type of icon ie, mdi, fa
+                icon_name:
+                  type: string
+                  description: name of the icon
               required:
                 - name
                 - categoryId

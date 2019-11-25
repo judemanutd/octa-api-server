@@ -7,6 +7,7 @@ import {
 } from "~repository/CategoryRepo";
 import { setRequired } from "~utils/helpers";
 import { missingParametersError } from "~exceptions/genericErrors";
+import { IIcon } from "~interfaces/IIcon";
 
 export default class CategoryController {
   /**
@@ -15,13 +16,14 @@ export default class CategoryController {
    * adds a category
    *
    * @param {string} name - name of the category
+   * @param {IIcon} icon - accepts the optional icon meta data
    */
-  public addCategory = async (name: string) => {
+  public addCategory = async (name: string, icon?: IIcon) => {
     try {
       const isValid = setRequired(name);
       if (!isValid) throw missingParametersError();
 
-      const category = await addCategory(name);
+      const category = await addCategory(name, icon);
       return category;
     } catch (error) {
       throw error;
@@ -35,13 +37,14 @@ export default class CategoryController {
    *
    * @param {string} id - id of the category that should be updated
    * @param {string} name - new name of the category
+   * @param {IIcon} icon - accepts the optional icon meta data
    */
-  public updateCategory = async (id: string, name: string) => {
+  public updateCategory = async (id: string, name: string, icon?: IIcon) => {
     try {
       const isValid = setRequired(id, name);
       if (!isValid) throw missingParametersError();
 
-      const category = await updateCategory(id, name);
+      const category = await updateCategory(id, name, icon);
       return category;
     } catch (error) {
       throw error;

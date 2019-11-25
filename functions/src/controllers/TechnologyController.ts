@@ -6,6 +6,7 @@ import {
   archiveTechnology,
   fetchTechnologies,
 } from "~repository/TechnologyRepo";
+import { IIcon } from "~interfaces/IIcon";
 
 export default class TechnologyController {
   /**
@@ -16,13 +17,14 @@ export default class TechnologyController {
    * @param {string} name - name of the technology
    * @param {string} categoryId - id of the category to which the technology belongs
    * @param {string} link - optional link to the technology homepage
+   * @param {IIcon} icon - accepts the optional icon meta data
    */
-  public addTechnology = async (name: string, categoryId: string, link?: string) => {
+  public addTechnology = async (name: string, categoryId: string, link?: string, icon?: IIcon) => {
     try {
       const isValid = setRequired(name, categoryId);
       if (!isValid) throw missingParametersError();
 
-      const result = await addTechnology(name, categoryId);
+      const result = await addTechnology(name, categoryId, link, icon);
       return result;
     } catch (error) {
       throw error;
@@ -38,13 +40,20 @@ export default class TechnologyController {
    * @param {string} name - name of the technology
    * @param {string} categoryId - id of the category to which the technology belongs
    * @param {string} link - optional link to the technology homepage
+   * @param {IIcon} icon - accepts the optional icon meta data
    */
-  public updateTechnology = async (id: string, name: string, categoryId: string, link?: string) => {
+  public updateTechnology = async (
+    id: string,
+    name: string,
+    categoryId: string,
+    link?: string,
+    icon?: IIcon,
+  ) => {
     try {
       const isValid = setRequired(id, name);
       if (!isValid) throw missingParametersError();
 
-      const result = await updateTechnology(id, name, categoryId, link);
+      const result = await updateTechnology(id, name, categoryId, link, icon);
       return result;
     } catch (error) {
       throw error;

@@ -6,6 +6,16 @@ const technologySchema = () =>
     id: string().required(),
     name: string().required(),
     category: categorySchema().required(),
+    link: string()
+      .nullable(true)
+      .default(() => null),
+    icon: object()
+      .shape({
+        type: string().required(),
+        name: string().required(),
+      })
+      .nullable(true)
+      .default(() => null),
     createdAt: date()
       .default(() => {
         return new Date();

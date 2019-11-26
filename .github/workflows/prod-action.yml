@@ -2,7 +2,7 @@ name: ReleaseDeployment
 
 on:
   pull_request:
-    branches: release
+    branches: master
     types: [closed]
 
 jobs:

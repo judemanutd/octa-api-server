@@ -1,0 +1,496 @@
+openapi: "3.0.2"
+info:
+  title: Octalogic Portfolio Public API Server
+  version: "1.0"
+  x-logo:
+    url: "https://octalogic.in/public/images/logos/octalogic.svg"
+    backgroundColor: "#FFFFFF"
+    altText: "Octalogic logo"
+    href: "https://octalogic.in/contact"
+servers:
+  - url: https://us-central1-octalogic-portfolio-dev.cloudfunctions.net/api/v1
+    description: Development Server
+security:
+  - bearerAuth: []
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the category
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: category name
+          example: Web Development
+        icon:
+          type: object
+          properties:
+            type:
+              type: string
+              description: the type of icon
+              example: mdi
+            name:
+              type: string
+              description: name of the icon
+              example: clock
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    Client:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the category
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: client name
+          example: John Doe
+        address:
+          type: string
+          description: address of the client
+          example: India
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    Technology:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the technology
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: technology name
+          example: Node JS
+        icon:
+          type: object
+          properties:
+            type:
+              type: string
+              description: the type of icon
+              example: mdi
+            name:
+              type: string
+              description: name of the icon
+              example: clock
+        category:
+          $ref: "#/components/schemas/Category"
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    GalleryItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the gallery item
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: optional name given to the gallery item
+          example: Mobile
+        description:
+          type: string
+          description: optional description for the gallery item
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+        link:
+          type: string
+          description: public link for the cover image
+          example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the project
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: project name
+          example: Order For Me
+        cover:
+          type: object
+          properties:
+            link:
+              type: string
+              description: public link for the cover image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+        logo:
+          type: object
+          properties:
+            link:
+              type: string
+              description: public link for the logo image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+        gallery:
+          type: array
+          items:
+            $ref: "#/components/schemas/GalleryItem"
+        client:
+          type: object
+          $ref: "#/components/schemas/Client"
+        startDate:
+          type: string
+          description: project start date ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        endDate:
+          type: string
+          description: project end date ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        cost:
+          type: number
+          description: cost of the project
+          example: 150000
+        currency:
+          type: string
+          description: currency the project was billed in
+          example: $
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    Component:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the component
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        name:
+          type: string
+          description: component name
+          example: Mobile Component
+        summary:
+          type: string
+          description: summary for the component
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+        description:
+          type: string
+          description: long description for the component
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        cover:
+          type: object
+          properties:
+            link:
+              type: string
+              description: public link for the cover image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+        logo:
+          type: object
+          properties:
+            link:
+              type: string
+              description: public link for the logo image
+              example: https://storage.googleapis.com/octalogic/public/images/e140073a-092e-48dd-8159-c0a67b617894
+        category:
+          type: object
+          $ref: "#/components/schemas/Category"
+        project:
+          type: object
+          $ref: "#/components/schemas/Project"
+        technology:
+          type: array
+          items:
+            $ref: "#/components/schemas/Technology"
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: type of link ie, app store, blog post, article
+                example: blog
+              url:
+                type: string
+                description: url for the link
+                example: https://google.com
+              text:
+                type: string
+                description: Text to display for the link
+                example: Google
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    Portfolio:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the portfolio
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        title:
+          type: string
+          description: portfolio name
+          example: Mobile Portfolio
+        code:
+          type: string
+          description: unique code for the portfolio link
+          example: yXbXwlBxfp
+        description:
+          type: string
+          description: long description for the portfolio
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        components:
+          type: array
+          items:
+            $ref: "#/components/schemas/Component"
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+    ClientNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Client does not exist
+    CategoryNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Category does not exist
+    ProjectNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Project does not exist
+    ComponentNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Component does not exist
+    EntityNotFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              description: HTTP status code
+              example: 404
+            message:
+              type: string
+              example: Entity not found
+    GenericStringRequestBody:
+      type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: HTTP status code
+        application_code:
+          type: integer
+          format: int32
+          description: Application specific code
+        message:
+          type: string
+        stack:
+          type: object
+          description: stack trace or empty object depending on the environment
+  responses:
+    Error:
+      description: General Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ClientNotFoundError:
+      description: Client Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClientNotFound"
+    CategoryNotFoundError:
+      description: Category Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CategoryNotFound"
+    ProjectNotFoundError:
+      description: Project Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProjectNotFound"
+    ComponentNotFoundError:
+      description: Component Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ComponentNotFound"
+    EntityNotFoundError:
+      description: Entity Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EntityNotFound"
+  parameters:
+    projectId:
+      in: path
+      name: projectId
+      required: true
+      schema:
+        type: string
+        description: id of the project that is being modified
+        example: 31765c4c-2606-4e1b-a613-7866212a86b6
+    portfolioCode:
+      in: path
+      name: portfolioCode
+      required: true
+      schema:
+        type: string
+        description: unique portfolio code
+        example: XySbQpg
+paths:
+  /portfolio/{portfolioCode}:
+    get:
+      tags:
+        - portfolio
+      summary: Fetch a single portfolio
+      description: Fetch a single portfolio from the system
+      parameters:
+        - $ref: "#/components/parameters/portfolioCode"
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    $ref: "#/components/schemas/Portfolio"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
+  /project:
+    get:
+      tags:
+        - project
+      description: Fetches all projects in the system
+      summary: Fetches all projects in the system
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Project"
+  /project/{projectId}:
+    get:
+      tags:
+        - project
+      description: fetch a single project in the system. The API does not return components that are part of the project, that is a separate call.
+      summary: fetch a single project in the system
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    $ref: "#/components/schemas/Project"
+        404:
+          $ref: "#/components/responses/EntityNotFoundError"
+  /project/{projectId}/component:
+    get:
+      tags:
+        - component
+      summary: Fetch all components for a project
+      description: Fetch all the components that belong to a project
+      parameters:
+        - $ref: "#/components/parameters/projectId"
+      responses:
+        200:
+          description: Successful response
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Component"

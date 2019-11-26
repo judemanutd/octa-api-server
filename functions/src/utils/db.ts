@@ -1,14 +1,18 @@
-import admin from "firebase-admin";
+import * as admin from "firebase-admin";
+// tslint:disable-next-line: no-import-side-effect
+import "firebase-functions";
 
 const TAG = " functions/utils/db.ts ===> ";
 
 let store: FirebaseFirestore.Firestore;
 
-export const connectToServer = firebaseFunctions => {
+export const connectToServer = () => {
   try {
-    admin.initializeApp(firebaseFunctions.config().firebase);
-
+    admin.initializeApp();
     store = admin.firestore();
+
+    const settings = { timestampsInSnapshots: true };
+    store.settings(settings);
 
     return store;
   } catch (error) {
@@ -17,4 +21,4 @@ export const connectToServer = firebaseFunctions => {
   }
 };
 
-export const getDb = () => store;
+export const getDb = (): FirebaseFirestore.Firestore => store;

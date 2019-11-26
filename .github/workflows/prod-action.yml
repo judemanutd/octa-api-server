@@ -1,0 +1,27 @@
+name: ReleaseDeployment
+
+on:
+  pull_request:
+    branches: master
+    types: [closed]
+
+jobs:
+  deploy:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Install dependencies
+        run: |
+          cd functions
+          npm install
+      - name: Deploy to Firebase Prod
+        uses: w9jds/firebase-action@v1.1.0
+        with:
+          args: deploy -P prod
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

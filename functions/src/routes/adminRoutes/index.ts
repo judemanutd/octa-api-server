@@ -1,21 +1,16 @@
-import express, { Request, Response, Router } from "express";
-import { response, successResponse } from "../../utils/helpers";
-
-const TAG = "functions/src/routes/adminRoutes/index.ts ===> ";
+import express, { Router } from "express";
+import categoryRoutes from "./categoryRoutes";
+import technologyRoutes from "./technologyRoutes";
+import clientRoutes from "./clientRoutes";
+import projectRoutes from "./projectRoutes";
+import portfolioRoutes from "./portfolioRoutes";
 
 const router: Router = express.Router();
 
-router.get("/bleh", (req: Request, res: Response) => {
-  try {
-    return response(
-      res,
-      successResponse({
-        bleh: 1,
-      }),
-    );
-  } catch (error) {
-    console.error(TAG, error);
-  }
-});
+router.use("/category", categoryRoutes);
+router.use("/technology", technologyRoutes);
+router.use("/client", clientRoutes);
+router.use("/project", projectRoutes);
+router.use("/portfolio", portfolioRoutes);
 
 export default router;

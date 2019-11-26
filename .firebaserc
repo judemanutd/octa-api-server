@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "octalogic-portfolio-dev"
+    "default": "octalogic-portfolio-dev",
+    "prod": "octalogic-portfolio"
   }
 }

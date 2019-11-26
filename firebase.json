@@ -13,60 +13,31 @@
   "storage": {
     "rules": "storage.rules"
   },
-  "hosting": [
-    {
-      "public": "public",
-      "site": "octalogic-portfolio-dev",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "/docs/swagger/public",
-          "destination": "/swagger_public_doc.html"
-        },
-        {
-          "source": "/docs/swagger/admin",
-          "destination": "/swagger_admin_doc.html"
-        },
-        {
-          "source": "/docs/public",
-          "destination": "/swagger_public_doc.html"
-        },
-        {
-          "source": "/docs/admin",
-          "destination": "/index.html"
-        },
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    },
-    {
-      "public": "public",
-      "site": "portfolio-docs",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "/docs/swagger/public",
-          "destination": "/swagger_public_doc.html"
-        },
-        {
-          "source": "/docs/swagger/admin",
-          "destination": "/swagger_admin_doc.html"
-        },
-        {
-          "source": "/docs/public",
-          "destination": "/swagger_public_doc.html"
-        },
-        {
-          "source": "/docs/admin",
-          "destination": "/index.html"
-        },
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    }
-  ]
+  "hosting": {
+    "public": "public",
+    "site": "portfolio-docs",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "/docs/swagger/public",
+        "destination": "/swagger_public_doc.html"
+      },
+      {
+        "source": "/docs/swagger/admin",
+        "destination": "/swagger_admin_doc.html"
+      },
+      {
+        "source": "/docs/public",
+        "destination": "/swagger_public_doc.html"
+      },
+      {
+        "source": "/docs/admin",
+        "destination": "/index.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
 }

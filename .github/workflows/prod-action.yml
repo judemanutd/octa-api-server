@@ -17,6 +17,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cp prod.firebase.json firebase.json
           cd functions
           npm install
       - name: Deploy to Firebase Prod

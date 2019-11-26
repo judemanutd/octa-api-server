@@ -15,7 +15,7 @@
   },
   "hosting": {
     "public": "public",
-    "site": "octalogic-portfolio-dev",
+    "site": "portfolio-docs",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {

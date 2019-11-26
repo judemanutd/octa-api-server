@@ -35,4 +35,3 @@ jobs:
           args: deploy -P default
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          PROJECT_ID: ${{ secrets.DEV_PROJECT_ID }}

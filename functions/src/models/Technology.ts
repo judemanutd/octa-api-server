@@ -16,7 +16,7 @@ class Technology {
     const obj: any = {
       id,
       name,
-      icon,
+      icon: icon || null,
       status: STATUS_ACTIVE,
       category: categoryRef,
       createdAt: new Date(),

@@ -10,7 +10,7 @@ class Category {
     return {
       id,
       name,
-      icon,
+      icon: icon || null,
       status: STATUS_ACTIVE,
       createdAt: new Date(),
       updatedAt: new Date(),

@@ -32,6 +32,6 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@v1.1.0
         with:
-          args: deploy -P default
+          args: deploy -P default --only firestore,storage,functions,hosting:develop-docs
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

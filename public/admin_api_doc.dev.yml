@@ -706,7 +706,7 @@ paths:
               properties:
                 name:
                   $ref: "#/components/schemas/GenericStringRequestBody"
-                categoryId:
+                category:
                   $ref: "#/components/schemas/GenericStringRequestBody"
                 link:
                   type: string
@@ -719,7 +719,7 @@ paths:
                   description: name of the icon
               required:
                 - name
-                - categoryId
+                - category
       responses:
         200:
           $ref: "#/components/responses/InsertUpdateResponse"
@@ -741,7 +741,7 @@ paths:
               properties:
                 name:
                   $ref: "#/components/schemas/GenericStringRequestBody"
-                categoryId:
+                category:
                   $ref: "#/components/schemas/GenericStringRequestBody"
                 link:
                   type: string
@@ -754,7 +754,7 @@ paths:
                   description: name of the icon
               required:
                 - name
-                - categoryId
+                - category
       responses:
         200:
           $ref: "#/components/responses/InsertUpdateResponse"

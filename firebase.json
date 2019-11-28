@@ -36,6 +36,10 @@
           "destination": "/index.html"
         },
         {
+          "source": "/robots.txt",
+          "destination": "/robots.txt"
+        },
+        {
           "source": "**",
           "destination": "/index.html"
         }
@@ -61,6 +65,10 @@
         {
           "source": "/docs/admin",
           "destination": "/index.html"
+        },
+        {
+          "source": "/robots.txt",
+          "destination": "/robots.txt"
         },
         {
           "source": "**",

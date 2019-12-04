@@ -15,7 +15,7 @@ const app: Application = express();
 const config = functions.config();
 const env = config.ecosystem.env;
 
-const whitelist = ["https://admin-portfolio.octalogic.in/"];
+const whitelist = ["https://portfolio-panel.octalogic.in/"];
 const corsOptions = {
   origin: (origin: string, callback: (arg0: Error, arg1: boolean) => void) => {
     if (whitelist.includes(origin)) {

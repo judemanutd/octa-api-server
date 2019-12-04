@@ -361,6 +361,9 @@ export const parseRow = async (row: FirebaseFirestore.DocumentData, isPublic: bo
     row.client.createdAt = row.client.createdAt.toDate();
     row.client.updatedAt = row.client.updatedAt.toDate();
 
+    if (row.startDate) row.startDate = row.startDate.toDate();
+    if (row.endDate) row.endDate = row.endDate.toDate();
+
     row.createdAt = row.createdAt.toDate();
     row.updatedAt = row.updatedAt.toDate();
 

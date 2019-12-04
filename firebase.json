@@ -29,7 +29,7 @@
         },
         {
           "source": "/docs/public",
-          "destination": "/swagger_public_doc.html"
+          "destination": "/public_doc.html"
         },
         {
           "source": "/docs/admin",
@@ -60,7 +60,7 @@
         },
         {
           "source": "/docs/public",
-          "destination": "/swagger_public_doc.html"
+          "destination": "/public_doc.html"
         },
         {
           "source": "/docs/admin",

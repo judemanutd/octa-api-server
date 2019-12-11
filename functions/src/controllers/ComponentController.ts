@@ -13,6 +13,7 @@ import {
   addGalleryImage,
   deleteGalleryImage,
   filterComponents,
+  fetchComponentsForSelect,
 } from "~repository/ComponentRepo";
 import { IMulterFileUpload } from "~interfaces/IMulterFileUpload";
 import { uploadFile, deleteFile } from "~utils/fileHelper";
@@ -194,6 +195,24 @@ export default class ComponentController {
       const component = await fetchComponents(project.id, isPublic);
 
       return component;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * ADMIN & PUBLIC
+   *
+   * fetch all components for display in a select, does not fetch related objects
+   *
+   */
+  public fetchComponentsForSelect = async () => {
+    try {
+      const components = await fetchComponentsForSelect();
+
+      return {
+        results: components,
+      };
     } catch (error) {
       throw error;
     }

@@ -1,7 +1,7 @@
 import express, { Request, Response, Router, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
-import componentRoutes from "./componentRoutes";
+import componentRoutes from "./projectComponentRoutes";
 import { response, successResponse } from "~utils/helpers";
 import { receiveFiles } from "~utils/multerHelper";
 import ProjectController from "~controllers/ProjectController";

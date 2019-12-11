@@ -40,15 +40,15 @@
     "@types/nanoid": "^2.1.0",
     "@types/ua-parser-js": "^0.7.33",
     "@types/uuid": "^3.4.6",
-    "@types/yup": "^0.26.24",
+    "@types/yup": "^0.26.26",
     "husky": "^3.1.0",
-    "lint-staged": "^9.4.3",
+    "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.3"
   },
   "husky": {
     "hooks": {

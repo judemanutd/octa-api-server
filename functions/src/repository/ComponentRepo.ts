@@ -186,6 +186,36 @@ export const fetchComponents = async (projectId: string, isPublic: boolean = fal
 };
 
 /**
+ * ADMIN & PUBLIC
+ *
+ * fetch all components for display in a select, does not fetch related objects
+ *
+ */
+export const fetchComponentsForSelect = async () => {
+  try {
+    const components = await getDb()
+      .collection("components")
+      .where("status", "==", STATUS_ACTIVE)
+      .get();
+
+    const result = await Promise.all(
+      components.docs.map(row => {
+        const item = row.data();
+
+        return {
+          id: item.id,
+          text: item.name,
+        };
+      }),
+    );
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
  * ADMIN
  *
  * fetch all components for the following filter critera

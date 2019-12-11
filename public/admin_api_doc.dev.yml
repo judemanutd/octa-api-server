@@ -1428,36 +1428,41 @@ paths:
             schema:
               type: object
               properties:
-                title:
-                  type: string
-                  description: title for the portfolio
-                  example: Mobile project
-                description:
-                  type: string
-                  description: long description for the portfolio
-                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                componentId:
-                  type: array
-                  items:
-                    type: string
-                technologyId:
-                  type: array
-                  items:
-                    type: string
-                categoryId:
-                  type: array
-                  items:
-                    type: string
-                projectId:
-                  type: array
-                  items:
-                    type: string
+                payload:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      description: title for the portfolio
+                      example: Mobile project
+                    description:
+                      type: string
+                      description: long description for the portfolio
+                      example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    componentId:
+                      type: array
+                      items:
+                        type: string
+                    technologyId:
+                      type: array
+                      items:
+                        type: string
+                    categoryId:
+                      type: array
+                      items:
+                        type: string
+                    projectId:
+                      type: array
+                      items:
+                        type: string
+                  required:
+                    - title
+                    - componentId
+                    - technologyId
+                    - categoryId
+                    - projectId
               required:
-                - title
-                - componentId
-                - technologyId
-                - categoryId
-                - projectId
+                - payload
       responses:
         200:
           $ref: "#/components/responses/InsertUpdateResponse"
@@ -1504,36 +1509,41 @@ paths:
             schema:
               type: object
               properties:
-                title:
-                  type: string
-                  description: title for the portfolio
-                  example: Mobile project
-                description:
-                  type: string
-                  description: long description for the portfolio
-                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                componentId:
-                  type: array
-                  items:
-                    type: string
-                technologyId:
-                  type: array
-                  items:
-                    type: string
-                categoryId:
-                  type: array
-                  items:
-                    type: string
-                projectId:
-                  type: array
-                  items:
-                    type: string
+                payload:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      description: title for the portfolio
+                      example: Mobile project
+                    description:
+                      type: string
+                      description: long description for the portfolio
+                      example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    componentId:
+                      type: array
+                      items:
+                        type: string
+                    technologyId:
+                      type: array
+                      items:
+                        type: string
+                    categoryId:
+                      type: array
+                      items:
+                        type: string
+                    projectId:
+                      type: array
+                      items:
+                        type: string
+                  required:
+                    - title
+                    - componentId
+                    - technologyId
+                    - categoryId
+                    - projectId
               required:
-                - title
-                - componentId
-                - technologyId
-                - categoryId
-                - projectId
+                - payload
       responses:
         200:
           $ref: "#/components/responses/InsertUpdateResponse"

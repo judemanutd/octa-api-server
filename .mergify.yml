@@ -6,3 +6,7 @@ pull_request_rules:
     actions:
       merge:
         method: merge
+      comment:
+        message: Auto merged after build passed and auto-merge label detected
+      label:
+        remove: [auto-merge]

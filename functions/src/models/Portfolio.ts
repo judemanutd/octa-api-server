@@ -3,11 +3,13 @@ import nanoid from "nanoid";
 import Component from "./Component";
 import { STATUS_ACTIVE } from "~utils/constants";
 import portfolioSchema from "~schemas/PortfolioSchema";
+import IPortfolioRefs from "~interfaces/IPortfolioRefs";
 
 class Portfolio {
   public static init = (
     title: string,
     componentIdRefs: FirebaseFirestore.DocumentReference[],
+    refs: IPortfolioRefs,
     description?: string,
   ) => {
     const id = uuid();
@@ -18,6 +20,7 @@ class Portfolio {
       description,
       code: nanoid(10),
       components: componentIdRefs,
+      refs,
       status: STATUS_ACTIVE,
       createdAt: new Date(),
       updatedAt: new Date(),

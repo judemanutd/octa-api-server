@@ -62,9 +62,7 @@ router.get("/:portfolioId", async (req: Request, res: Response, next: NextFuncti
 // fetch all portfolios
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const showComponents = !!req.query.showComponents;
-
-    const result = await portfolioController.fetchPortfolios(showComponents);
+    const result = await portfolioController.fetchPortfolios();
 
     return response(res, successResponse(result));
   } catch (error) {

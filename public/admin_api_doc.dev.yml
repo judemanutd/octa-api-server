@@ -342,8 +342,58 @@ components:
           type: string
           description: long description for the portfolio
           example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        components:
+        category:
           type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: unique identifier for the category
+                example: 31765c4c-2606-4e1b-a613-7866212a86b6
+              name:
+                type: string
+                description: name of the category
+                example: Mobile Development
+        component:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: unique identifier for the component
+                example: 31765c4c-2606-4e1b-a613-7866212a86b6
+              name:
+                type: string
+                description: name of the component
+                example: Components 1
+        project:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: unique identifier for the project
+                example: 31765c4c-2606-4e1b-a613-7866212a86b6
+              name:
+                type: string
+                description: name of the project
+                example: Project A
+        technology:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: unique identifier for the technology
+                example: 31765c4c-2606-4e1b-a613-7866212a86b6
+              name:
+                type: string
+                description: name of the technology
+                example: Node JS
         createdAt:
           type: string
           description: created at ISO string
@@ -1522,6 +1572,7 @@ paths:
                         type: string
                   required:
                     - title
+                    - description
                     - componentId
                     - technologyId
                     - categoryId
@@ -1540,12 +1591,6 @@ paths:
         - portfolio
       summary: Fetch all portfolios listed
       description: Fetch all portfolios listed in the system
-      parameters:
-        - in: query
-          name: showComponents
-          schema:
-            type: boolean
-            description: indicates if components should be returned for each portfolio or not, if false an empty components array is returned
       responses:
         200:
           description: Successful response
@@ -1603,6 +1648,7 @@ paths:
                         type: string
                   required:
                     - title
+                    - description
                     - componentId
                     - technologyId
                     - categoryId

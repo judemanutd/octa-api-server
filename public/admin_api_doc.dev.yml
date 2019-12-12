@@ -323,6 +323,35 @@ components:
           type: string
           description: updated at ISO string
           example: "2019-10-13T07:47:09.376Z"
+    PortfolioAll:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique identifier for the portfolio
+          example: 31765c4c-2606-4e1b-a613-7866212a86b6
+        title:
+          type: string
+          description: portfolio name
+          example: Mobile Portfolio
+        code:
+          type: string
+          description: unique code for the portfolio link
+          example: yXbXwlBxfp
+        description:
+          type: string
+          description: long description for the portfolio
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        components:
+          type: array
+        createdAt:
+          type: string
+          description: created at ISO string
+          example: "2019-10-13T07:47:09.376Z"
+        updatedAt:
+          type: string
+          description: updated at ISO string
+          example: "2019-10-13T07:47:09.376Z"
     SelectObject:
       type: object
       properties:
@@ -1528,7 +1557,7 @@ paths:
                   payload:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Portfolio"
+                      $ref: "#/components/schemas/PortfolioAll"
         401:
           $ref: "#/components/responses/UnauthorizedError"
   /portfolio/{portfolioId}:

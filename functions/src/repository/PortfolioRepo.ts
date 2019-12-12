@@ -6,6 +6,7 @@ import { parseRow as parseComponentRow } from "~repository/ComponentRepo";
 import { entityNotFoundError } from "~exceptions/genericErrors";
 import APIError from "~utils/APIError";
 import { HTTP_BAD_REQUEST } from "~utils/http_code";
+import { IPortfolioPayload } from "~interfaces/IPortfolioPayload";
 
 /**
  * ADMIN
@@ -14,11 +15,13 @@ import { HTTP_BAD_REQUEST } from "~utils/http_code";
  *
  * @param title - title for the portfolio
  * @param components  - components that belong to the given portfolio
+ * @param payload  - original payload so part of it can be saved in the db for future retrieval
  * @param description - optional descrition for the portfolio
  */
 export const addPortfolio = async (
   title: string,
   components: Component[],
+  payload: IPortfolioPayload,
   description?: string,
 ) => {
   try {
@@ -28,7 +31,40 @@ export const addPortfolio = async (
         .doc(component.id),
     );
 
-    const insertObj = Portfolio.init(title, componentRefs, description);
+    const { categoryId, componentId, projectId, technologyId } = payload;
+
+    const payloadComponentRefs = componentId.map(component =>
+      getDb()
+        .collection("components")
+        .doc(component),
+    );
+
+    const payloadCategoryRefs = categoryId.map(category =>
+      getDb()
+        .collection("categories")
+        .doc(category),
+    );
+
+    const payloadProjectRefs = projectId.map(project =>
+      getDb()
+        .collection("projects")
+        .doc(project),
+    );
+
+    const payloadTechnologyRefs = technologyId.map(technology =>
+      getDb()
+        .collection("technologies")
+        .doc(technology),
+    );
+
+    const refs = {
+      category: payloadCategoryRefs,
+      project: payloadProjectRefs,
+      technology: payloadTechnologyRefs,
+      component: payloadComponentRefs,
+    };
+
+    const insertObj = Portfolio.init(title, componentRefs, refs, description);
 
     await getDb()
       .collection("portfolios")
@@ -52,12 +88,14 @@ export const addPortfolio = async (
  * @param portfolioId - id of the portfolio that needs to be updated
  * @param title - title for the portfolio
  * @param components  - components that belong to the given portfolio
+ * @param payload  - original payload so part of it can be saved in the db for future retrieval
  * @param description - optional descrition for the portfolio
  */
 export const updatePortfolio = async (
   portfolioId: string,
   title: string,
   components: Component[],
+  payload: IPortfolioPayload,
   description?: string,
 ) => {
   try {
@@ -84,6 +122,41 @@ export const updatePortfolio = async (
     if (!shouldUpdate) {
       throw new APIError("No attributes specified for updation", undefined, HTTP_BAD_REQUEST);
     }
+
+    const { categoryId, componentId, projectId, technologyId } = payload;
+
+    const payloadComponentRefs = componentId.map(component =>
+      getDb()
+        .collection("components")
+        .doc(component),
+    );
+
+    const payloadCategoryRefs = categoryId.map(category =>
+      getDb()
+        .collection("categories")
+        .doc(category),
+    );
+
+    const payloadProjectRefs = projectId.map(project =>
+      getDb()
+        .collection("projects")
+        .doc(project),
+    );
+
+    const payloadTechnologyRefs = technologyId.map(technology =>
+      getDb()
+        .collection("technologies")
+        .doc(technology),
+    );
+
+    const refs = {
+      category: payloadCategoryRefs,
+      project: payloadProjectRefs,
+      technology: payloadTechnologyRefs,
+      component: payloadComponentRefs,
+    };
+
+    obj.refs = refs;
 
     await getDb()
       .collection("portfolios")
@@ -159,16 +232,93 @@ export const fetchPublicPortfolio = async (portfolioCode: string) => {
  *
  * fetch all portfolios
  *
- * @param showComponents - boolean to indicate if the components should be fetched as well
  */
-export const fetchPortFolios = async (showComponents: boolean = false) => {
+export const fetchPortFolios = async () => {
   try {
     const portfolios = await getDb()
       .collection("portfolios")
       .where("status", "==", STATUS_ACTIVE)
       .get();
 
-    const promises = portfolios.docs.map(project => parseRow(project.data(), showComponents));
+    const promises = portfolios.docs.map(async item => {
+      const row = item.data();
+      const references = row.refs;
+
+      let categoryData = [];
+      let componentData = [];
+      let projectData = [];
+      let technologyData = [];
+
+      if (references) {
+        const categoryPromises = row.refs.category.map(
+          async (categoryRef: FirebaseFirestore.DocumentReference) => {
+            const category = await categoryRef.get();
+            const categoryData = category.exists ? category.data() : null;
+            return {
+              id: categoryData.id,
+              name: categoryData.name,
+            };
+          },
+        );
+
+        const componentPromises = row.refs.component.map(
+          async (componentRef: FirebaseFirestore.DocumentReference) => {
+            const component = await componentRef.get();
+            const componentData = component.exists ? component.data() : null;
+            return {
+              id: componentData.id,
+              name: componentData.name,
+            };
+          },
+        );
+
+        const projectPromises = row.refs.project.map(
+          async (projectRef: FirebaseFirestore.DocumentReference) => {
+            const project = await projectRef.get();
+            const projectData = project.exists ? project.data() : null;
+            return {
+              id: projectData.id,
+              name: projectData.name,
+            };
+          },
+        );
+
+        const technologyPromises = row.refs.technology.map(
+          async (technologyRef: FirebaseFirestore.DocumentReference) => {
+            const technology = await technologyRef.get();
+            const technologyData = technology.exists ? technology.data() : null;
+            return {
+              id: technologyData.id,
+              name: technologyData.name,
+            };
+          },
+        );
+
+        const [category, component, project, technology] = await Promise.all([
+          Promise.all(categoryPromises),
+          Promise.all(componentPromises),
+          Promise.all(projectPromises),
+          Promise.all(technologyPromises),
+        ]);
+
+        categoryData = category;
+        componentData = component;
+        projectData = project;
+        technologyData = technology;
+      }
+
+      return {
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        category: categoryData,
+        component: componentData,
+        project: projectData,
+        technology: technologyData,
+        createdAt: row.createdAt.toDate(),
+        updatedAt: row.updatedAt.toDate(),
+      };
+    });
 
     return await Promise.all(promises);
   } catch (error) {

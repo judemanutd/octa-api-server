@@ -60,7 +60,12 @@ export default class PortfolioController {
           "Please specify components that need to be included in the portfolio",
         );
 
-      const result = await addPortfolio(parsedPayload.title, components, parsedPayload.description);
+      const result = await addPortfolio(
+        parsedPayload.title,
+        components,
+        payload,
+        parsedPayload.description,
+      );
       return result;
     } catch (error) {
       throw error;
@@ -117,6 +122,7 @@ export default class PortfolioController {
         portfolioId,
         parsedPayload.title,
         components,
+        payload,
         parsedPayload.description,
       );
       return result;
@@ -148,12 +154,10 @@ export default class PortfolioController {
    * ADMIN
    *
    * fetch all portfolios
-   *
-   * @param showComponents - boolean to indicate if the components should be fetched as well
    */
-  public fetchPortfolios = async (showComponents: boolean = false) => {
+  public fetchPortfolios = async () => {
     try {
-      const result = await fetchPortFolios(showComponents);
+      const result = await fetchPortFolios();
       return result;
     } catch (error) {
       throw error;

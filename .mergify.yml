@@ -1,7 +1,6 @@
 pull_request_rules:
   - name: automatic merge on CI success and review
     conditions:
-      - status-success=Build/build
       - label=["auto-merge"]
     actions:
       merge:

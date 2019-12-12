@@ -9,4 +9,4 @@ pull_request_rules:
       comment:
         message: Auto merged after build passed and auto-merge label detected
       label:
-        remove: auto-merge
+        remove: [auto-merge]

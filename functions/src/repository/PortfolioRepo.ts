@@ -178,8 +178,9 @@ export const updatePortfolio = async (
  * fetch a single portfolio
  *
  * @param portfolioId - id of the portfolio that needs to be fetched
+ * @param fetchDetails - indicates if complete details for a component need to be fetched
  */
-export const fetchPortFolio = async (portfolioId: string) => {
+export const fetchPortFolio = async (portfolioId: string, fetchDetails: boolean = false) => {
   try {
     const portfolio = await getDb()
       .collection("portfolios")
@@ -189,7 +190,7 @@ export const fetchPortFolio = async (portfolioId: string) => {
     if (!portfolio.exists || (portfolio.exists && portfolio.data().status !== STATUS_ACTIVE))
       throw entityNotFoundError("Portfolio does not exist");
 
-    return parseRow(portfolio.data(), true);
+    return parseRow(portfolio.data(), fetchDetails);
   } catch (error) {
     throw error;
   }
@@ -217,7 +218,7 @@ export const fetchPublicPortfolio = async (portfolioCode: string) => {
       throw entityNotFoundError("Portfolio does not exist");
     }
 
-    const portfolio = portfolios[0];
+    const portfolio: any = portfolios[0];
 
     if (portfolio.status !== STATUS_ACTIVE) throw entityNotFoundError("Portfolio does not exist");
 
@@ -240,8 +241,63 @@ export const fetchPortFolios = async () => {
       .where("status", "==", STATUS_ACTIVE)
       .get();
 
-    const promises = portfolios.docs.map(async item => {
-      const row = item.data();
+    const promises = portfolios.docs.map(item => parseRow(item.data()));
+
+    return await Promise.all(promises);
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * ADMIN
+ *
+ * archived a single portfolio
+ *
+ * @param portfolioId - id of the portfolio that needs to be archived
+ */
+export const archivePortFolio = async (portfolioId: string) => {
+  try {
+    await getDb()
+      .collection("portfolios")
+      .doc(portfolioId)
+      .update({
+        status: STATUS_INACTIVE,
+        updatedAt: new Date(),
+      });
+
+    return {
+      id: portfolioId,
+      message: "Successfully Archived",
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const parseRow = async (
+  row: FirebaseFirestore.DocumentData,
+  showComponents: boolean = false,
+  isPublic: boolean = false,
+) => {
+  try {
+    if (showComponents) {
+      const componentPromises = row.components.map(
+        async (componentRef: FirebaseFirestore.DocumentReference) => {
+          const component: FirebaseFirestore.DocumentSnapshot = await componentRef.get();
+          const componentData = component.exists
+            ? await parseComponentRow(component.data(), isPublic)
+            : null;
+          return componentData;
+        },
+      );
+      row.components = await Promise.all(componentPromises);
+
+      row.createdAt = row.createdAt.toDate();
+      row.updatedAt = row.updatedAt.toDate();
+
+      return new Portfolio(row);
+    } else {
       const references = row.refs;
 
       let categoryData = [];
@@ -318,65 +374,7 @@ export const fetchPortFolios = async () => {
         createdAt: row.createdAt.toDate(),
         updatedAt: row.updatedAt.toDate(),
       };
-    });
-
-    return await Promise.all(promises);
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * ADMIN
- *
- * archived a single portfolio
- *
- * @param portfolioId - id of the portfolio that needs to be archived
- */
-export const archivePortFolio = async (portfolioId: string) => {
-  try {
-    await getDb()
-      .collection("portfolios")
-      .doc(portfolioId)
-      .update({
-        status: STATUS_INACTIVE,
-        updatedAt: new Date(),
-      });
-
-    return {
-      id: portfolioId,
-      message: "Successfully Archived",
-    };
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const parseRow = async (
-  row: FirebaseFirestore.DocumentData,
-  showComponents: boolean = false,
-  isPublic: boolean = false,
-) => {
-  try {
-    if (showComponents) {
-      const componentPromises = row.components.map(
-        async (componentRef: FirebaseFirestore.DocumentReference) => {
-          const component: FirebaseFirestore.DocumentSnapshot = await componentRef.get();
-          const componentData = component.exists
-            ? await parseComponentRow(component.data(), isPublic)
-            : null;
-          return componentData;
-        },
-      );
-      row.components = await Promise.all(componentPromises);
-    } else {
-      row.components = [];
     }
-
-    row.createdAt = row.createdAt.toDate();
-    row.updatedAt = row.updatedAt.toDate();
-
-    return new Portfolio(row);
   } catch (error) {
     throw error;
   }

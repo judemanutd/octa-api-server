@@ -51,7 +51,8 @@ router.get("/:portfolioId", async (req: Request, res: Response, next: NextFuncti
   try {
     const portfolioId = req.params.portfolioId;
 
-    const result = await portfolioController.fetchPortFolio(portfolioId);
+    const fetchDetails = !!req.query.detailed;
+    const result = await portfolioController.fetchPortFolio(portfolioId, fetchDetails);
 
     return response(res, successResponse(result));
   } catch (error) {

@@ -137,13 +137,14 @@ export default class PortfolioController {
    * fetch a single portfolio
    *
    * @param portfolioId - id of the portfolio that needs to be fetched
+   * @param fetchDetails - indicates if complete details for a component need to be fetched
    */
-  public fetchPortFolio = async (portfolioId: string) => {
+  public fetchPortFolio = async (portfolioId: string, fetchDetails: boolean = false) => {
     try {
       const isValid = setRequired(portfolioId);
       if (!isValid) throw missingParametersError();
 
-      const result = await fetchPortFolio(portfolioId);
+      const result = await fetchPortFolio(portfolioId, fetchDetails);
       return result;
     } catch (error) {
       throw error;

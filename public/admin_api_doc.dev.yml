@@ -323,7 +323,8 @@ components:
           type: string
           description: updated at ISO string
           example: "2019-10-13T07:47:09.376Z"
-    PortfolioAll:
+    PortfolioCondensed:
+      title: Portfolio Condensed
       type: object
       properties:
         id:
@@ -672,6 +673,13 @@ components:
         type: string
         description: id of the portfolio that is being modified
         example: 31765c4c-2606-4e1b-a613-7866212a86b6
+    detailed:
+      in: query
+      name: detailed
+      schema:
+        type: boolean
+        description: boolean indicates if details of all component should be returned or just a condensed version should be returned
+        example: true
 paths:
   /category:
     get:
@@ -1602,7 +1610,7 @@ paths:
                   payload:
                     type: array
                     items:
-                      $ref: "#/components/schemas/PortfolioAll"
+                      $ref: "#/components/schemas/PortfolioCondensed"
         401:
           $ref: "#/components/responses/UnauthorizedError"
   /portfolio/{portfolioId}:
@@ -1669,16 +1677,16 @@ paths:
       description: Fetch a single portfolio from the system
       parameters:
         - $ref: "#/components/parameters/portfolioId"
+        - $ref: "#/components/parameters/detailed"
       responses:
         200:
           description: Successful response
           content:
             "application/json":
               schema:
-                type: object
-                properties:
-                  payload:
-                    $ref: "#/components/schemas/Portfolio"
+                oneOf:
+                  - $ref: "#/components/schemas/Portfolio"
+                  - $ref: "#/components/schemas/PortfolioCondensed"
         401:
           $ref: "#/components/responses/UnauthorizedError"
     delete:

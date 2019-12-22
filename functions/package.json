@@ -13,23 +13,20 @@
     "logs": "firebase functions:log",
     "deploy-firestore-rules-only": "firebase deploy --only firestore:rules"
   },
-  "engines": {
-    "node": "10"
-  },
   "main": "lib/index.js",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "firebase-admin": "^8.8.0",
+    "firebase-admin": "^8.9.0",
     "firebase-functions": "^3.3.0",
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
     "multer": "github:emadalam/multer",
-    "nanoid": "^2.1.7",
-    "ua-parser-js": "^0.7.20",
+    "nanoid": "^2.1.8",
+    "ua-parser-js": "^0.7.21",
     "uuid": "^3.3.3",
-    "yup": "^0.27.0"
+    "yup": "^0.28.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.1",
@@ -40,15 +37,15 @@
     "@types/nanoid": "^2.1.0",
     "@types/ua-parser-js": "^0.7.33",
     "@types/uuid": "^3.4.6",
-    "@types/yup": "^0.26.26",
+    "@types/yup": "^0.26.27",
     "husky": "^3.1.0",
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.7.3"
+    "tslint-plugin-prettier": "^2.1.0",
+    "typescript": "^3.7.4"
   },
   "husky": {
     "hooks": {

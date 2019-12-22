@@ -3,7 +3,6 @@
   "rulesDirectory": ["tslint-plugin-prettier"],
   "rules": {
     "prettier": true,
-    "no-unused-variable": true,
     "no-var-requires": true,
     "import-spacing": true,
     "ordered-imports": false,

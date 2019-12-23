@@ -366,6 +366,7 @@ export const parseRow = async (
       return {
         id: row.id,
         title: row.title,
+        code: row.code,
         description: row.description,
         category: categoryData,
         component: componentData,

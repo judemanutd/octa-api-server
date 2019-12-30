@@ -368,12 +368,10 @@ export const fetchComponent = async (componentId: string) => {
  *
  * adds a cover image to a component
  *
- * @param {string} projectId - id of the project
  * @param {string} componentId - id of the component for which the cover image is being added
  * @param {IMulterFileUpload[]} files - files array returned by multer
  */
 export const updatedCoverImage = async (
-  projectId: string,
   componentId: string,
   file?: ICloudStorageUploadResponse,
 ) => {
@@ -401,7 +399,7 @@ export const updatedCoverImage = async (
       // delete cover image
       await getDb()
         .collection("components")
-        .doc(projectId)
+        .doc(componentId)
         .update({
           cover: null,
           updatedAt: new Date(),

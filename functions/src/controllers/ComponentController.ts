@@ -301,7 +301,7 @@ export default class ComponentController {
 
       const component = await fetchComponent(componentId);
 
-      const response = await updatedCoverImage(component.project.id, component.id);
+      const response = await updatedCoverImage(component.id);
 
       // delete the previous coverImage if any
       if (component && component.cover) {

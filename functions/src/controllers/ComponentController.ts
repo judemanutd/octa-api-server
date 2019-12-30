@@ -269,11 +269,7 @@ export default class ComponentController {
       // upload the cover image
       const coverImageObject = await uploadFile(coverImage);
 
-      const response = await updatedCoverImage(
-        component.project.id,
-        component.id,
-        coverImageObject,
-      );
+      const response = await updatedCoverImage(component.id, coverImageObject);
 
       // delete the previous coverImage if any
       if (component && component.cover) {

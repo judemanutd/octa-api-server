@@ -32,7 +32,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
       };
     }
 
-    const result = await technologyController.addTechnology(name, categoryId, link, icon);
+    const result = await technologyController.addTechnology(name, categoryId, icon, link);
 
     return response(res, successResponse(result));
   } catch (error) {
@@ -57,7 +57,7 @@ router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
       };
     }
 
-    const result = await technologyController.updateTechnology(id, name, categoryId, link, icon);
+    const result = await technologyController.updateTechnology(id, name, categoryId, icon, link);
 
     return response(res, successResponse(result));
   } catch (error) {

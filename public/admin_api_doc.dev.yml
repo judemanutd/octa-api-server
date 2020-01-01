@@ -819,6 +819,8 @@ paths:
               required:
                 - name
                 - category
+                - icon_type
+                - icon_name
       responses:
         200:
           $ref: "#/components/responses/InsertUpdateResponse"
@@ -854,6 +856,8 @@ paths:
               required:
                 - name
                 - category
+                - icon_type
+                - icon_name
       responses:
         200:
           $ref: "#/components/responses/InsertUpdateResponse"

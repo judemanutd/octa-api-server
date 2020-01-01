@@ -16,12 +16,12 @@ export default class TechnologyController {
    *
    * @param {string} name - name of the technology
    * @param {string} categoryId - id of the category to which the technology belongs
+   * @param {IIcon} icon - accepts the icon meta data
    * @param {string} link - optional link to the technology homepage
-   * @param {IIcon} icon - accepts the optional icon meta data
    */
-  public addTechnology = async (name: string, categoryId: string, link?: string, icon?: IIcon) => {
+  public addTechnology = async (name: string, categoryId: string, icon: IIcon, link?: string) => {
     try {
-      const isValid = setRequired(name, categoryId);
+      const isValid = setRequired(name, categoryId, icon);
       if (!isValid) throw missingParametersError();
 
       const result = await addTechnology(name, categoryId, link, icon);
@@ -34,23 +34,23 @@ export default class TechnologyController {
   /**
    * ADMIN
    *
-   * adds a technology
+   * update a technology
    *
    * @param {string} id - id of the technology
    * @param {string} name - name of the technology
    * @param {string} categoryId - id of the category to which the technology belongs
-   * @param {string} link - optional link to the technology homepage
    * @param {IIcon} icon - accepts the optional icon meta data
+   * @param {string} link - optional link to the technology homepage
    */
   public updateTechnology = async (
     id: string,
     name: string,
     categoryId: string,
+    icon: IIcon,
     link?: string,
-    icon?: IIcon,
   ) => {
     try {
-      const isValid = setRequired(id, name);
+      const isValid = setRequired(id, name, icon);
       if (!isValid) throw missingParametersError();
 
       const result = await updateTechnology(id, name, categoryId, link, icon);

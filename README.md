@@ -36,9 +36,3 @@ Client Interface : https://portfolio.octalogic.in/
 API Docs : https://portfolio-api-docs.octalogic.in/
 
 Base API URL : https://asia-east2-octalogic-portfolio.cloudfunctions.net/api/v1
-
-<br/>
-
-### License
-
-GPL v3

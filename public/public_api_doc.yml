@@ -8,7 +8,9 @@ info:
     altText: "Octalogic logo"
     href: "https://octalogic.in/contact"
 servers:
-  - url: https://us-central1-octalogic-portfolio-dev.cloudfunctions.net/api/v1
+  - url: https://asia-east2-octalogic-portfolio-dev.cloudfunctions.net/api/v1
+    description: Development Server
+  - url: https://us-central1-octalogic-portfolio.cloudfunctions.net/api/v1
     description: Development Server
 security:
   - bearerAuth: []

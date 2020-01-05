@@ -10,4 +10,5 @@ export const api = functions
   .runWith({
     memory: "2GB",
   })
+  .region("asia-east2")
   .https.onRequest(server);

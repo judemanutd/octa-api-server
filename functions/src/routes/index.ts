@@ -8,6 +8,7 @@ import { analytics } from "~middlewares/analyticsHelper";
 import { routeNotFoundError } from "~exceptions/genericErrors";
 import APIError from "~utils/APIError";
 import { HTTP_FORBIDDEN } from "~utils/http_code";
+import { successResponse, response } from "~utils/helpers";
 
 const router: Router = express.Router();
 
@@ -26,6 +27,15 @@ const corsOptions = {
 };
 
 router.options("*", cors()); // Enabling CORS Pre-Flight
+
+router.use("/v1/status", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    return response(res, successResponse(true));
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.use(
   "/v1/admin",
   cors(env === "prod" ? corsOptions : { origin: true }),

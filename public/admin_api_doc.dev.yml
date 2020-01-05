@@ -10,7 +10,7 @@ info:
 servers:
   - url: https://asia-east2-octalogic-portfolio-dev.cloudfunctions.net/api/v1/admin
     description: Development Server
-  - url: https://us-central1-octalogic-portfolio.cloudfunctions.net/api/v1/admin
+  - url: https://asia-east2-octalogic-portfolio.cloudfunctions.net/api/v1/admin
     description: Production Server
 security:
   - bearerAuth: []

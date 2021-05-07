@@ -27,7 +27,7 @@
     "moment": "^2.24.0",
     "multer": "github:emadalam/multer",
     "nanoid": "^2.1.8",
-    "ua-parser-js": "^0.7.21",
+    "ua-parser-js": "^0.7.24",
     "uuid": "^3.3.3",
     "yup": "^0.28.0"
   },
